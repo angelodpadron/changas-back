@@ -1,10 +1,10 @@
-package com.changas.TTIPChangas;
+package com.changas;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TtipChangasApplicationTests {
+class ChangasAPIApplicationTests {
 
 	@Test
 	void contextLoads() {

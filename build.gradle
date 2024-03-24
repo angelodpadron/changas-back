@@ -6,6 +6,8 @@ plugins {
 
 group = 'com.changas'
 version = '0.0.1-SNAPSHOT'
+description = 'API de Changas para TTIP'
+
 
 java {
 	sourceCompatibility = '21'
