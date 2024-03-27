@@ -2,15 +2,19 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.4'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'jacoco'
 }
 
 group = 'com.changas'
 version = '0.0.1-SNAPSHOT'
 description = 'API de Changas para TTIP'
 
-
 java {
 	sourceCompatibility = '21'
+}
+
+jacoco {
+	toolVersion = "0.8.11"
 }
 
 repositories {
@@ -19,9 +23,28 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	compileOnly 'org.projectlombok:lombok:1.18.32'
+	annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+test {
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		csv.required = true
+		html.required = false
+		xml.required = false
+	}
+}
+
+check.dependsOn jacocoTestReport
