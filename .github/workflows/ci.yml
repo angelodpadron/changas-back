@@ -26,5 +26,8 @@ jobs:
             echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/firestore-credentials.json" >> $GITHUB_ENV
         shell: bash
 
+      - name: Grant execute permission for Gradlew
+        run: chmod +x ./gradlew
+
       - name: Build with Gradle
         run: ./gradlew build -x test
