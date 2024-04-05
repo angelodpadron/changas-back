@@ -17,6 +17,7 @@ public class OpenAPIConfiguration {
 
     @Value("${app.base-url}")
     private String serverUrl;
+
     @Bean
     public OpenAPI defineOpenApi() {
         Server server = new Server();
