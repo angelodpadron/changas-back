@@ -3,18 +3,19 @@ package com.changas.model;
 import com.google.cloud.firestore.annotation.DocumentId;
 import lombok.*;
 
-import java.util.List;
+import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Customer {
+public class HiringTransaction {
     @DocumentId
     private String id;
-    private String name;
-    private String email;
-    private String photoUrl;
-    private List<String> hirings;
+    private String changaId;
+    private String customerId;
+    private Instant creationDate;
+
+
 }

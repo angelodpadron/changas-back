@@ -17,5 +17,6 @@ public class Changa {
     public String description;
     public String photoUrl;
     public List<String> topics;
-    public Customer provider;
+    public CustomerSummary providerSummary;
+
 }
