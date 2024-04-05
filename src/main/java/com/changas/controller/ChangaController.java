@@ -1,14 +1,12 @@
 package com.changas.controller;
 
+import com.changas.dto.HireChangaRequest;
 import com.changas.model.Changa;
 import com.changas.service.ChangaService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -27,5 +25,15 @@ public class ChangaController {
         return ResponseEntity.ok(changaService.getAllChangas());
     }
 
+    @Operation(summary = "Hire a give changa")
+    @PostMapping("/hire")
+    public ResponseEntity<?> hireChanga(@RequestBody HireChangaRequest hireChangaRequest) {
+        try {
+            changaService.hireChanga(hireChangaRequest.getChangaId(), hireChangaRequest.getCustomerId());
+            return ResponseEntity.ok().body("Changa successfully hired.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }
