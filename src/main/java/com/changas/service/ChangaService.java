@@ -36,6 +36,18 @@ public class ChangaService {
         return changas;
     }
 
+    public Changa getChangaById(String changaId) throws ExecutionException, InterruptedException, ChangaNotFoundException {
+        DocumentReference changaRef = firestore.collection(CHANGAS_COLLECTION).document(changaId);
+        ApiFuture<DocumentSnapshot> changaFuture = changaRef.get();
+        DocumentSnapshot changaSnapshot = changaFuture.get();
+
+        if (!changaSnapshot.exists()) {
+            throw new ChangaNotFoundException("No changa found with id " + changaId);
+        }
+
+        return changaSnapshot.toObject(Changa.class);
+    }
+
     // TODO: Improve exception handling, asynchronous handling, and edge cases handling like customers hiring their own changa
     public void hireChanga(String changaId, String customerId) throws CustomerNotFoundException, ChangaNotFoundException, ExecutionException, InterruptedException {
 

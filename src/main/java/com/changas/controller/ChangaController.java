@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/changas")
@@ -21,8 +20,14 @@ public class ChangaController {
 
     @Operation(summary = "Returns all the changas")
     @GetMapping
-    public ResponseEntity<List<Changa>> getAllChangas() throws ExecutionException, InterruptedException {
+    public ResponseEntity<List<Changa>> getAllChangas() throws Exception {
         return ResponseEntity.ok(changaService.getAllChangas());
+    }
+
+    @Operation(summary = "Return a changa with a given id")
+    @GetMapping("/{changaId}")
+    public ResponseEntity<Changa> getChangaWithId(@PathVariable String changaId) throws Exception {
+        return ResponseEntity.ok(changaService.getChangaById(changaId));
     }
 
     @Operation(summary = "Hire a give changa")
