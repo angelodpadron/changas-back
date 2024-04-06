@@ -1,17 +1,14 @@
 package com.changas.controller;
 
+import com.changas.dto.HireChangaRequest;
 import com.changas.model.Changa;
 import com.changas.service.ChangaService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/changas")
@@ -23,9 +20,25 @@ public class ChangaController {
 
     @Operation(summary = "Returns all the changas")
     @GetMapping
-    public ResponseEntity<List<Changa>> getAllChangas() throws ExecutionException, InterruptedException {
+    public ResponseEntity<List<Changa>> getAllChangas() throws Exception {
         return ResponseEntity.ok(changaService.getAllChangas());
     }
 
+    @Operation(summary = "Return a changa with a given id")
+    @GetMapping("/{changaId}")
+    public ResponseEntity<Changa> getChangaWithId(@PathVariable String changaId) throws Exception {
+        return ResponseEntity.ok(changaService.getChangaById(changaId));
+    }
+
+    @Operation(summary = "Hire a give changa")
+    @PostMapping("/hire")
+    public ResponseEntity<?> hireChanga(@RequestBody HireChangaRequest hireChangaRequest) {
+        try {
+            changaService.hireChanga(hireChangaRequest.getChangaId(), hireChangaRequest.getCustomerId());
+            return ResponseEntity.ok().body("Changa successfully hired.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }
