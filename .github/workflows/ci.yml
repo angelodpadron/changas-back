@@ -20,14 +20,11 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Set up Firestore Credentials
-        run: |
-            echo "${{ secrets.FIRESTORE_CREDENTIALS }}" | base64 --decode > $HOME/firestore-credentials.json
-            echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/firestore-credentials.json" >> $GITHUB_ENV
-        shell: bash
-
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew build
+
+      - name: Run tests
+        run: .gradlew test
