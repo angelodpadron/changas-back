@@ -1,21 +1,25 @@
 package com.changas.model;
 
-import com.google.cloud.firestore.annotation.DocumentId;
+import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
+@Entity
 public class HiringTransaction {
-    @DocumentId
-    private String id;
-    private String changaId;
-    private String customerId;
-    private Instant creationDate;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "changa_id", nullable = false)
+    private Changa changa;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
 }

@@ -1,7 +1,7 @@
 package com.changas.controller;
 
+import com.changas.dto.ChangaOverviewDTO;
 import com.changas.dto.HireChangaRequest;
-import com.changas.model.Changa;
 import com.changas.service.ChangaService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +20,13 @@ public class ChangaController {
 
     @Operation(summary = "Returns all the changas")
     @GetMapping
-    public ResponseEntity<List<Changa>> getAllChangas() throws Exception {
+    public ResponseEntity<List<ChangaOverviewDTO>> getAllChangas() {
         return ResponseEntity.ok(changaService.getAllChangas());
     }
 
     @Operation(summary = "Return a changa with a given id")
     @GetMapping("/{changaId}")
-    public ResponseEntity<Changa> getChangaWithId(@PathVariable String changaId) throws Exception {
+    public ResponseEntity<ChangaOverviewDTO> getChangaWithId(@PathVariable Long changaId) throws Exception {
         return ResponseEntity.ok(changaService.getChangaById(changaId));
     }
 
