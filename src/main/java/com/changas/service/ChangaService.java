@@ -1,98 +1,106 @@
 package com.changas.service;
 
+import com.changas.dto.ChangaOverviewDTO;
+import com.changas.dto.CustomerOverviewDTO;
 import com.changas.exceptions.ChangaNotFoundException;
 import com.changas.exceptions.CustomerNotFoundException;
 import com.changas.model.Changa;
+import com.changas.model.Customer;
 import com.changas.model.HiringTransaction;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
+import com.changas.repository.ChangaRepository;
+import com.changas.repository.CustomerRepository;
+import com.changas.repository.HiringTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ChangaService {
-    private final Firestore firestore;
+    private final ChangaRepository changaRepository;
+    private final CustomerRepository customerRepository;
+    private final HiringTransactionRepository hiringTransactionRepository;
 
-    private final String CHANGAS_COLLECTION = "changas";
-    private final String CUSTOMERS_COLLECTION = "customers";
-    private final String HIRINGS_COLLECTION = "hiringTransactions";
+    public List<ChangaOverviewDTO> getAllChangas() {
+        List<ChangaOverviewDTO> overviews = new ArrayList<>();
+        changaRepository.findAll().forEach(changa -> {
+            ChangaOverviewDTO changaOverview = ChangaOverviewDTO
+                    .builder()
+                    .title(changa.getTitle())
+                    .id(changa.getId())
+                    .topics(changa.getTopics())
+                    .description(changa.getDescription())
+                    .photoUrl(changa.getPhotoUrl())
+                    .customerSummary(CustomerOverviewDTO
+                            .builder()
+                            .id(changa.getProvider().getId())
+                            .name(changa.getProvider().getName())
+                            .email(changa.getProvider().getEmail())
+                            .photoUrl(changa.getProvider().getPhotoUrl())
+                            .build())
+                    .build();
 
-    public List<Changa> getAllChangas() throws InterruptedException, ExecutionException {
-        List<Changa> changas = new ArrayList<>();
+            overviews.add(changaOverview);
+        });
 
-        ApiFuture<QuerySnapshot> future = firestore.collection(CHANGAS_COLLECTION).get();
-        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-
-        for (QueryDocumentSnapshot document : documents) {
-            changas.add(document.toObject(Changa.class));
-        }
-
-        return changas;
+        return overviews;
     }
 
-    public Changa getChangaById(String changaId) throws ExecutionException, InterruptedException, ChangaNotFoundException {
-        DocumentReference changaRef = firestore.collection(CHANGAS_COLLECTION).document(changaId);
-        ApiFuture<DocumentSnapshot> changaFuture = changaRef.get();
-        DocumentSnapshot changaSnapshot = changaFuture.get();
+    public ChangaOverviewDTO getChangaById(Long changaId) throws ChangaNotFoundException {
+        Optional<Changa> optionalChanga = changaRepository.findById(changaId);
 
-        if (!changaSnapshot.exists()) {
-            throw new ChangaNotFoundException("No changa found with id " + changaId);
+        if (optionalChanga.isPresent()) {
+            Changa changa = optionalChanga.get();
+            return ChangaOverviewDTO
+                    .builder()
+                    .title(changa.getTitle())
+                    .id(changa.getId())
+                    .topics(changa.getTopics())
+                    .description(changa.getDescription())
+                    .photoUrl(changa.getPhotoUrl())
+                    .customerSummary(CustomerOverviewDTO
+                            .builder()
+                            .id(changa.getProvider().getId())
+                            .name(changa.getProvider().getName())
+                            .email(changa.getProvider().getEmail())
+                            .photoUrl(changa.getProvider().getPhotoUrl())
+                            .build())
+                    .build();
         }
 
-        return changaSnapshot.toObject(Changa.class);
+        throw new ChangaNotFoundException(changaId);
+
     }
 
-    // TODO: Improve exception handling, asynchronous handling, and edge cases handling like customers hiring their own changa
-    public void hireChanga(String changaId, String customerId) throws CustomerNotFoundException, ChangaNotFoundException, ExecutionException, InterruptedException {
+    public void hireChanga(Long changaId, Long customerId) throws ChangaNotFoundException, CustomerNotFoundException {
+        Optional<Changa> optionalChanga = changaRepository.findById(changaId);
 
-        // Validate both the customer and the changa exist
-        DocumentReference changaRef = firestore.collection(CHANGAS_COLLECTION).document(changaId);
-        DocumentReference customerRef = firestore.collection(CUSTOMERS_COLLECTION).document(customerId);
-
-        ApiFuture<DocumentSnapshot> changaFuture = changaRef.get();
-        ApiFuture<DocumentSnapshot> customerFuture = customerRef.get();
-
-        DocumentSnapshot changaSnapshot = changaFuture.get();
-        DocumentSnapshot customerSnapshot = customerFuture.get();
-
-        if (!changaSnapshot.exists()) {
-            throw new ChangaNotFoundException("No changa found with id " + changaId);
+        if (optionalChanga.isEmpty()) {
+            throw new ChangaNotFoundException(changaId);
         }
 
-        if (!customerSnapshot.exists()) {
-            throw new CustomerNotFoundException("No customer found with id " + customerId);
+        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+
+        if (optionalCustomer.isEmpty()) {
+            throw new CustomerNotFoundException(customerId);
         }
 
-        // Create the transaction document
+        Changa changa = optionalChanga.get();
+        Customer customer = optionalCustomer.get();
         HiringTransaction transaction = HiringTransaction
                 .builder()
-                .changaId(changaId)
-                .customerId(customerId)
-                .creationDate(Instant.now())
+                .changa(changa)
+                .customer(customer)
                 .build();
 
-        DocumentReference transactionRef = firestore
-                .collection(HIRINGS_COLLECTION)
-                .document();
+        hiringTransactionRepository.save(transaction);
 
-        transaction.setId(transactionRef.getId());
-
-        // Save the transaction and add the id to the customer's hirings field
-        ApiFuture<WriteResult> transactionFuture = transactionRef.set(transaction);
-        transactionFuture.get();
-
-        ApiFuture<WriteResult> updateCustomerFuture = firestore
-                .collection(CUSTOMERS_COLLECTION)
-                .document(customerId)
-                .update("hirings", FieldValue.arrayUnion(transaction.getId()));
-        updateCustomerFuture.get();
+        customer.saveHiringTransaction(transaction);
 
 
     }
+
 }

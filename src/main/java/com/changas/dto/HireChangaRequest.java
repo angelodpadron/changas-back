@@ -5,9 +5,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
 public class HireChangaRequest {
-    private String changaId;
-    private String customerId;
+    private Long changaId;
+    private Long customerId;
 }

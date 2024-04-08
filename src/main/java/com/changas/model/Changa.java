@@ -1,6 +1,6 @@
 package com.changas.model;
 
-import com.google.cloud.firestore.annotation.DocumentId;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -10,13 +10,18 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@Entity
 public class Changa {
-    @DocumentId
-    public String id;
-    public String title;
-    public String description;
-    public String photoUrl;
-    public List<String> topics;
-    public CustomerSummary providerSummary;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String title;
+    private String description;
+    private String photoUrl;
+    @ElementCollection
+    private List<String> topics;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Customer provider;
+
 
 }

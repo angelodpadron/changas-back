@@ -1,6 +1,7 @@
 package com.changas.controller;
 
 import com.changas.dto.HiringOverviewDTO;
+import com.changas.exceptions.CustomerNotFoundException;
 import com.changas.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping("/{customerId}/hirings")
-    public ResponseEntity<List<HiringOverviewDTO>> getHiredTransactions(@PathVariable String customerId) throws Exception {
+    public ResponseEntity<List<HiringOverviewDTO>> getHiredTransactions(@PathVariable Long customerId) throws CustomerNotFoundException {
         return ResponseEntity.ok(customerService.getHiringsFromCustomer(customerId));
     }
 
