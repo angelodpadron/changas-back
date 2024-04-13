@@ -2,7 +2,9 @@ package com.changas.service;
 
 import com.changas.dto.ChangaOverviewDTO;
 import com.changas.dto.CustomerOverviewDTO;
+import com.changas.dto.SignupRequest;
 import com.changas.exceptions.ChangaNotFoundException;
+import com.changas.exceptions.CustomerAlreadyRegisteredException;
 import com.changas.exceptions.CustomerNotFoundException;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
@@ -10,7 +12,9 @@ import com.changas.model.HiringTransaction;
 import com.changas.repository.ChangaRepository;
 import com.changas.repository.CustomerRepository;
 import com.changas.repository.HiringTransactionRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

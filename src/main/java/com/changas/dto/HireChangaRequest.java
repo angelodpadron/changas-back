@@ -1,12 +1,12 @@
 package com.changas.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Builder
-public class HireChangaRequest {
-    private Long changaId;
-    private Long customerId;
+public record HireChangaRequest(
+        @JsonProperty(value = "changa_id")
+        Long changaId,
+        @JsonProperty(value = "customer_id")
+        Long customerId
+) {
 }

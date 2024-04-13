@@ -1,6 +1,7 @@
 package com.changas.controller;
 
 import com.changas.exceptions.ChangaNotFoundException;
+import com.changas.exceptions.CustomerAlreadyRegisteredException;
 import com.changas.exceptions.CustomerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +29,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler({ChangaNotFoundException.class, CustomerNotFoundException.class})
     public ResponseEntity<String> handleNotFoundException(ChangaNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(CustomerAlreadyRegisteredException.class)
+    public ResponseEntity<String> handleCustomerAlreadyRegisteredException(CustomerAlreadyRegisteredException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

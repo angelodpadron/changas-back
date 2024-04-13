@@ -34,7 +34,7 @@ public class ChangaController {
     @PostMapping("/hire")
     public ResponseEntity<?> hireChanga(@RequestBody HireChangaRequest hireChangaRequest) {
         try {
-            changaService.hireChanga(hireChangaRequest.getChangaId(), hireChangaRequest.getCustomerId());
+            changaService.hireChanga(hireChangaRequest.changaId(), hireChangaRequest.customerId());
             return ResponseEntity.ok().body("Changa successfully hired.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
