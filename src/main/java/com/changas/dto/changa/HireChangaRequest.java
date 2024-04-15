@@ -1,12 +1,9 @@
-package com.changas.dto;
+package com.changas.dto.changa;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
 
 public record HireChangaRequest(
         @JsonProperty(value = "changa_id")
-        Long changaId,
-        @JsonProperty(value = "customer_id")
-        Long customerId
+        Long changaId
 ) {
 }

@@ -1,11 +1,11 @@
 package com.changas.controller;
 
-import com.changas.dto.LoginRequest;
-import com.changas.dto.LoginResponse;
-import com.changas.dto.SignupRequest;
-import com.changas.exceptions.CustomerAlreadyRegisteredException;
+import com.changas.dto.ApiResponse;
+import com.changas.dto.auth.LoginRequest;
+import com.changas.dto.auth.LoginResponse;
+import com.changas.dto.auth.SignupRequest;
+import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
 import com.changas.service.AuthService;
-import com.changas.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,19 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final CustomerService customerService;
     private final AuthService authService;
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequest request) throws CustomerAlreadyRegisteredException {
-        customerService.signup(request);
+        authService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         String token = authService.login(request);
-        return ResponseEntity.ok(new LoginResponse(request.email(), token));
+        LoginResponse loginResponse = new LoginResponse(request.email(), token);
+        return ResponseEntity.ok(ApiResponse.success(loginResponse));
     }
 
 }

@@ -1,4 +1,4 @@
-package com.changas.dto;
+package com.changas.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

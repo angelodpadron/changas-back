@@ -1,38 +1,39 @@
 package com.changas.controller;
 
-import com.changas.exceptions.ChangaNotFoundException;
-import com.changas.exceptions.CustomerAlreadyRegisteredException;
-import com.changas.exceptions.CustomerNotFoundException;
+import com.changas.dto.ApiError;
+import com.changas.dto.ApiResponse;
+import com.changas.exceptions.changa.ChangaNotFoundException;
+import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
+import com.changas.exceptions.customer.CustomerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.concurrent.ExecutionException;
+import java.util.Arrays;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
-    @ExceptionHandler(InterruptedException.class)
-    public ResponseEntity<String> handleInterruptedException() {
-        Thread.currentThread().interrupt();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Operation was interrupted.");
-    }
-
-    @ExceptionHandler(ExecutionException.class)
-    public ResponseEntity<String> handleExecutionException(ExecutionException e) {
-        Throwable cause = e.getCause();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error during execution: " + cause.getMessage());
-    }
-
     @ExceptionHandler({ChangaNotFoundException.class, CustomerNotFoundException.class})
-    public ResponseEntity<String> handleNotFoundException(ChangaNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    public ResponseEntity<ApiResponse<?>> handleNotFoundException(ChangaNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(asApiErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(CustomerAlreadyRegisteredException.class)
-    public ResponseEntity<String> handleCustomerAlreadyRegisteredException(CustomerAlreadyRegisteredException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    public ResponseEntity<ApiResponse<?>> handleCustomerAlreadyRegisteredException(CustomerAlreadyRegisteredException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(asApiErrorResponse(e.getMessage()));
     }
+
+    @ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
+    public ResponseEntity<ApiResponse<?>> handleBaCredentialsException(BadCredentialsException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(asApiErrorResponse(e.getMessage()));
+    }
+
+    private ApiResponse<?> asApiErrorResponse(String message, String... details) {
+        ApiError apiError = new ApiError(message, Arrays.stream(details).toList());
+        return ApiResponse.error(apiError);
+    }
+
 }

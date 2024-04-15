@@ -1,6 +1,7 @@
 package com.changas.config;
 
-import com.changas.dto.ApiErrorResponse;
+import com.changas.dto.ApiError;
+import com.changas.dto.ApiResponse;
 import com.changas.service.CustomerDetailsService;
 import com.changas.utils.JWTHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,13 +14,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +40,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         }
 
         try {
-
             String token = header.substring(7);
             String username = JWTHelper.extractUsername(token);
 
@@ -56,25 +56,20 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
-        } catch (UsernameNotFoundException e) {
-            ApiErrorResponse errorResponse = new ApiErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, "No user found with provided token");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(toJson(errorResponse));
-        } catch (AccessDeniedException e) {
-            ApiErrorResponse errorResponse = new ApiErrorResponse(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+        }
+        catch (AccessDeniedException e) {
+            ApiError apiError = new ApiError("Access Denied", Collections.singletonList(e.getMessage()));
+            ApiResponse<?> errorResponse = ApiResponse.error(apiError);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write(toJson(errorResponse));
+            response.setContentType("application/json");
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
+            ApiError apiError = new ApiError("Internal Server Error", Collections.singletonList("An unexpected error occurred."));
+            ApiResponse<?> errorResponse = ApiResponse.error(apiError);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Internal Server Error");
+            response.setContentType("application/json");
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         }
     }
 
-    private String toJson(ApiErrorResponse response) {
-        try {
-            return objectMapper.writeValueAsString(response);
-        } catch (Exception e) {
-            return "Access Denied"; // Return generic message if serialization fails
-        }
-    }
 }

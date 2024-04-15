@@ -1,4 +1,4 @@
-package com.changas.exceptions;
+package com.changas.exceptions.customer;
 
 public class CustomerAlreadyRegisteredException extends Exception{
     public CustomerAlreadyRegisteredException(String customerEmail) {

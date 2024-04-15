@@ -3,6 +3,8 @@ package com.changas.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,5 +23,7 @@ public class HiringTransaction {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
+
+    private Instant creationDate;
 
 }
