@@ -18,7 +18,7 @@ public class JWTHelper {
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final int MINUTES = 60;
 
-    public static String generateToken(String id, String email, String customerName, String photoUrl) {
+    public static String generateToken(Long id, String email, String customerName, String photoUrl) {
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(email)

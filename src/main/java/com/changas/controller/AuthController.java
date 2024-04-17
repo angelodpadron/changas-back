@@ -5,6 +5,7 @@ import com.changas.dto.auth.LoginRequest;
 import com.changas.dto.auth.LoginResponse;
 import com.changas.dto.auth.SignupRequest;
 import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
+import com.changas.exceptions.customer.CustomerAuthenticationException;
 import com.changas.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) throws CustomerAuthenticationException {
         String token = authService.login(request);
         LoginResponse loginResponse = new LoginResponse(request.email(), token);
         return ResponseEntity.ok(ApiResponse.success(loginResponse));
