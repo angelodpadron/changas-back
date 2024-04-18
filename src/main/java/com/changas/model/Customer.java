@@ -28,4 +28,8 @@ public class Customer {
     public void saveHiringTransaction(HiringTransaction hiringTransaction) {
         this.hirings.add(hiringTransaction);
     }
+
+    public void saveChangaPost(Changa changa) {
+        this.posts.add(changa);
+    }
 }
