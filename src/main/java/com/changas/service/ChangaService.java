@@ -12,10 +12,10 @@ import com.changas.repository.CustomerRepository;
 import com.changas.repository.HiringTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -103,4 +103,27 @@ public class ChangaService {
 
     }
 
+    public List<ChangaOverviewDTO> getChangaByTitleContainsIgnoreCase(String title) {
+        List<ChangaOverviewDTO> ret = new ArrayList<ChangaOverviewDTO>();
+        changaRepository.findByTitleContainingIgnoreCase(title).forEach(changa -> {
+            ChangaOverviewDTO changaOverview = ChangaOverviewDTO
+                    .builder()
+                    .title(changa.getTitle())
+                    .id(changa.getId())
+                    .topics(changa.getTopics())
+                    .description(changa.getDescription())
+                    .photoUrl(changa.getPhotoUrl())
+                    .customerSummary(CustomerOverviewDTO
+                            .builder()
+                            .id(changa.getProvider().getId())
+                            .name(changa.getProvider().getName())
+                            .email(changa.getProvider().getEmail())
+                            .photoUrl(changa.getProvider().getPhotoUrl())
+                            .build())
+                    .build();
+
+            ret.add(changaOverview);
+        });
+        return ret;
+    }
 }

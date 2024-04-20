@@ -2,9 +2,12 @@ package com.changas.controller;
 
 import com.changas.dto.ChangaOverviewDTO;
 import com.changas.dto.HireChangaRequest;
+import com.changas.exceptions.ChangaNotFoundException;
+import com.changas.exceptions.ResourceNotFoundException;
 import com.changas.service.ChangaService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +41,17 @@ public class ChangaController {
             return ResponseEntity.ok().body("Changa successfully hired.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Search changa by title")
+    @GetMapping("/search/{title}")
+    public ResponseEntity<List<ChangaOverviewDTO>> searchChangaByTitle(@PathVariable String title){
+        try {
+            return ResponseEntity.ok(changaService.getChangaByTitleContainsIgnoreCase(title));
+        }
+        catch (Exception e){
+            throw new ResourceNotFoundException("No hay Changas segun el titulo: " + title);
         }
     }
 
