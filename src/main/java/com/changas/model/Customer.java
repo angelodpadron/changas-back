@@ -18,6 +18,7 @@ public class Customer {
     private Long id;
     private String name;
     private String email;
+    private String password;
     private String photoUrl;
     @OneToMany(mappedBy = "customer")
     private Set<HiringTransaction> hirings = new HashSet<>();
