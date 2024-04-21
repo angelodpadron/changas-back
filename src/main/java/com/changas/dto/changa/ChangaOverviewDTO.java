@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Builder
@@ -16,7 +16,7 @@ public class ChangaOverviewDTO {
     private String title;
     private String description;
     private String photoUrl;
-    private List<String> topics;
+    private Set<String> topics;
     @JsonProperty("providerSummary")
     private CustomerOverviewDTO customerSummary;
 }

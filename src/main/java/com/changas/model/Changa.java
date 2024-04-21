@@ -3,7 +3,7 @@ package com.changas.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +19,7 @@ public class Changa {
     private String description;
     private String photoUrl;
     @ElementCollection
-    private List<String> topics;
+    private Set<String> topics;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer provider;
 
