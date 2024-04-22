@@ -24,6 +24,9 @@ public class HiringTransaction {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
+    private String workDetails;
+    private String workAreaPhotoUrl;
+
     private Instant creationDate;
 
 }

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Instant;
@@ -22,8 +21,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class CustomerServiceTest {
 
-
-    @Autowired
     @InjectMocks
     private CustomerService customerService;
 
