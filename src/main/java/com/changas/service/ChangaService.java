@@ -12,9 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +39,14 @@ public class ChangaService {
 
     }
 
+    public Set<ChangaOverviewDTO> findChangaWithTopics(Set<String> topics) {
+        Set<ChangaOverviewDTO> overviews = new HashSet<>();
+        changaRepository
+                .findChangasByTopics(topics.stream().map(String::toLowerCase).collect(Collectors.toSet()))
+                .forEach(changa -> overviews.add(toChangaOverviewDTO(changa)));
+        return overviews;
+    }
+
     public Optional<Changa> getChangaById(Long changaId) {
         return changaRepository.findById(changaId);
     }
@@ -59,6 +66,19 @@ public class ChangaService {
     }
 
     private ChangaOverviewDTO toChangaOverviewDTO(Changa changa) {
-        return ChangaOverviewDTO.builder().title(changa.getTitle()).id(changa.getId()).topics(changa.getTopics()).description(changa.getDescription()).photoUrl(changa.getPhotoUrl()).customerSummary(CustomerOverviewDTO.builder().id(changa.getProvider().getId()).name(changa.getProvider().getName()).email(changa.getProvider().getEmail()).photoUrl(changa.getProvider().getPhotoUrl()).build()).build();
+        return ChangaOverviewDTO.builder()
+                .title(changa.getTitle())
+                .id(changa.getId())
+                .topics(changa.getTopics())
+                .description(changa.getDescription())
+                .photoUrl(changa.getPhotoUrl())
+                .customerSummary(CustomerOverviewDTO.builder()
+                        .id(changa.getProvider().getId())
+                        .name(changa.getProvider().getName())
+                        .email(changa.getProvider().getEmail())
+                        .photoUrl(changa.getProvider()
+                                .getPhotoUrl())
+                        .build())
+                .build();
     }
 }
