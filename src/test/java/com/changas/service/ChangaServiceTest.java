@@ -16,12 +16,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -40,6 +41,23 @@ class ChangaServiceTest {
     @BeforeEach
     void setUp() {
         testCustomer = createTestCustomer();
+    }
+
+
+    @Test
+    @DisplayName("Search a changa with topics returns a set of changas that includes those topics")
+    void findChangasByTopicsTest() {
+        Changa changa1 = mock(Changa.class);
+        Changa changa2 = mock(Changa.class);
+
+        when(changa1.getProvider()).thenReturn(testCustomer);
+        when(changa2.getProvider()).thenReturn(testCustomer);
+        when(changaRepository.findChangasByTopics(any())).thenReturn(new HashSet<>(List.of(changa1, changa2)));
+
+        Set<ChangaOverviewDTO> filtered = changaService.findChangaWithTopics(new HashSet<>(List.of("Plumbing", "Wielding")));
+
+        assertFalse(filtered.isEmpty());
+        assertEquals(2, filtered.size());
     }
 
     @Test

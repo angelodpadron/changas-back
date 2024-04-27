@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/changas")
@@ -38,6 +39,12 @@ public class ChangaController {
     @GetMapping("/{changaId}")
     public ResponseEntity<ApiResponse<ChangaOverviewDTO>> getChangaWithId(@PathVariable Long changaId) throws ChangaNotFoundException {
         return ResponseEntity.ok(ApiResponse.success(changaService.getChangaOverviewById(changaId)));
+    }
+
+    @Operation(summary = "Return changas that contain certain topics")
+    @GetMapping("/findBy")
+    public ResponseEntity<ApiResponse<Set<ChangaOverviewDTO>>> findChangasWithTopics(@RequestParam Set<String> topics) {
+        return ResponseEntity.ok(ApiResponse.success(changaService.findChangaWithTopics(topics)));
     }
 
     @Operation(summary = "Hire a give changa")
