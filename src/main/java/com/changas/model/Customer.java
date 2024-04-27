@@ -28,4 +28,5 @@ public class Customer {
     public void saveHiringTransaction(HiringTransaction hiringTransaction) {
         this.hirings.add(hiringTransaction);
     }
+
 }

@@ -1,5 +1,6 @@
 package com.changas.controller;
 
+import com.changas.dto.notification.HireChangaNotificationDTO;
 import com.changas.exceptions.ResourceNotFoundException;
 import com.changas.dto.*;
 import com.changas.dto.changa.ChangaOverviewDTO;
@@ -10,6 +11,7 @@ import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.model.Customer;
 import com.changas.service.AuthService;
 import com.changas.service.ChangaService;
+import com.changas.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
@@ -26,6 +28,7 @@ public class ChangaController {
 
     private final ChangaService changaService;
     private final AuthService authService;
+    private final NotificationService notificationService;
 
     @Operation(summary = "Returns all the changas")
     @GetMapping
@@ -44,6 +47,7 @@ public class ChangaController {
     public ResponseEntity<ApiResponse<HiringOverviewDTO>> hireChanga(@RequestBody HireChangaRequest hireChangaRequest) throws ChangaNotFoundException, CustomerNotAuthenticatedException {
         Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
         HiringOverviewDTO hiringOverview = changaService.hireChanga(hireChangaRequest.changaId(), customer);
+        notificationService.createNotification(hireChangaRequest.changaId(),customer);
         return ResponseEntity.ok(ApiResponse.success(hiringOverview));
     }
 
@@ -58,4 +62,20 @@ public class ChangaController {
         }
     }
 
+    /*
+    @GetMapping("/notifications/{changaid}")
+    public ResponseEntity<List<HireChangaNotificationDTO>> getNotificationsByChanga(Long changaId) throws Exception{
+        List<HireChangaNotificationDTO> notifications = changaService.getNotificationsByChangaId(changaId);
+        return ResponseEntity.ok().body(notifications);
+    }
+    */
+    @GetMapping("/notifications/{changaId}")
+    public ResponseEntity<List<HireChangaNotificationDTO>> getNotificationsByChanga(@PathVariable Long changaId) {
+        try {
+            List<HireChangaNotificationDTO> notifications = changaService.getNotificationsByChangaId(changaId);
+            return ResponseEntity.ok().body(notifications);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("No hay changa con id: " + changaId);
+        }
+    }
 }

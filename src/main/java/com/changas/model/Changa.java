@@ -22,6 +22,11 @@ public class Changa {
     private List<String> topics;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer provider;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Notification> changaNotifications;
 
 
+    public void addHireChangaNotification(Notification notification) {
+        this.changaNotifications.add(notification);
+    }
 }
