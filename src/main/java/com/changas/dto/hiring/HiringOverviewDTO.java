@@ -1,4 +1,4 @@
-package com.changas.dto;
+package com.changas.dto.hiring;
 
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.changas.exceptions;
+package com.changas.exceptions.changa;
 
 public class ChangaNotFoundException extends Exception{
     public ChangaNotFoundException(Long changaId) {

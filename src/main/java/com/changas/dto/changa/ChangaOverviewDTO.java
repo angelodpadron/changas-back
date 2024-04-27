@@ -1,5 +1,6 @@
-package com.changas.dto;
+package com.changas.dto.changa;
 
+import com.changas.dto.customer.CustomerOverviewDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,14 +1,13 @@
 package com.changas.service;
 
-import com.changas.dto.ChangaOverviewDTO;
-import com.changas.dto.CustomerOverviewDTO;
-import com.changas.exceptions.ChangaNotFoundException;
-import com.changas.exceptions.CustomerNotFoundException;
+import com.changas.dto.changa.ChangaOverviewDTO;
+import com.changas.dto.customer.CustomerOverviewDTO;
+import com.changas.dto.hiring.HiringOverviewDTO;
+import com.changas.exceptions.changa.ChangaNotFoundException;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
 import com.changas.model.HiringTransaction;
 import com.changas.repository.ChangaRepository;
-import com.changas.repository.CustomerRepository;
 import com.changas.repository.HiringTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,12 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
 public class ChangaService {
     private final ChangaRepository changaRepository;
-    private final CustomerRepository customerRepository;
     private final HiringTransactionRepository hiringTransactionRepository;
 
     public List<ChangaOverviewDTO> getAllChangas() {
@@ -75,31 +78,29 @@ public class ChangaService {
 
     }
 
-    public void hireChanga(Long changaId, Long customerId) throws ChangaNotFoundException, CustomerNotFoundException {
-        Optional<Changa> optionalChanga = changaRepository.findById(changaId);
+    public HiringOverviewDTO hireChanga(Long changaId, Customer customer) throws ChangaNotFoundException {
+        Changa changa = changaRepository.findById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
 
-        if (optionalChanga.isEmpty()) {
-            throw new ChangaNotFoundException(changaId);
-        }
-
-        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
-
-        if (optionalCustomer.isEmpty()) {
-            throw new CustomerNotFoundException(customerId);
-        }
-
-        Changa changa = optionalChanga.get();
-        Customer customer = optionalCustomer.get();
-        HiringTransaction transaction = HiringTransaction
+        HiringTransaction hiringTransaction = HiringTransaction
                 .builder()
                 .changa(changa)
                 .customer(customer)
+                .creationDate(Instant.now())
                 .build();
 
-        hiringTransactionRepository.save(transaction);
+        hiringTransactionRepository.save(hiringTransaction);
 
-        customer.saveHiringTransaction(transaction);
+        customer.saveHiringTransaction(hiringTransaction);
 
+        return HiringOverviewDTO
+                .builder()
+                .hiringId(hiringTransaction.getId())
+                .changaId(changa.getId())
+                .changaPhotoUrl(changa.getPhotoUrl())
+                .changaDescription(changa.getDescription())
+                .changaTitle(changa.getTitle())
+                .creationDate(hiringTransaction.getCreationDate())
+                .build();
 
     }
 
