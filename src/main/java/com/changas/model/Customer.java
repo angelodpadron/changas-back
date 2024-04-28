@@ -29,4 +29,7 @@ public class Customer {
         this.hirings.add(hiringTransaction);
     }
 
+    public void saveChangaPost(Changa changa) {
+        this.posts.add(changa);
+    }
 }

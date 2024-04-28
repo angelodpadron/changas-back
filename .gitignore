@@ -38,5 +38,4 @@ out/
 
 ### Custom ###
 credentials.json
-/src/main/resources/application.properties
 *.log

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,18 +12,25 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
+
+@SequenceGenerator(
+        name = "customSecuence",
+        sequenceName = "custom secuence",
+        initialValue = 5,
+        allocationSize = 1
+)
 public class Changa {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customSecuence")
     private Long id;
     private String title;
     private String description;
     private String photoUrl;
     @ElementCollection
-    private List<String> topics;
+    private Set<String> topics;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer provider;
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "changa")
     private List<Notification> changaNotifications;
 
 

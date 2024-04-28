@@ -18,10 +18,12 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
     private Instant createdAt;
     private Boolean isRead = false;
     @ManyToOne
+    @JoinColumn(name = "changa_id", nullable = false)
     private Changa changa;
 
 }

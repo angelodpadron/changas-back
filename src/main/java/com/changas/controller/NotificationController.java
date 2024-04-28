@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor
@@ -23,13 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController {
 
     private final NotificationService notificationService;
-    /*
-    @GetMapping("{changaid}")
-    public ResponseEntity<HireChangaNotificationDTO> getNotificationsByChanga(Long changaId){
-        Changa changa = changaService.getChangaById(changaId);
-        HireChangaNotificationDTO notification = notificationService.getNotificationById(idNotification);
-        return ResponseEntity.ok().body(notification);
-    }
 
-     */
+    @GetMapping
+    public ResponseEntity<List<HireChangaNotificationDTO>> getAllNotifications(){
+        List <HireChangaNotificationDTO> notifications = notificationService.getAllNotifications();
+        return ResponseEntity.ok().body(notifications);
+    }
 }

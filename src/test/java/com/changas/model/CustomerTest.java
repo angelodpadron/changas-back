@@ -35,4 +35,17 @@ class CustomerTest {
 
     }
 
+    @Test
+    @DisplayName("A user can save a changa")
+    void aUserCanCreateAChangaTest() {
+        Customer customer = new Customer();
+        Changa changa = mock(Changa.class);
+
+        customer.saveChangaPost(changa);
+
+        assertTrue(customer.getPosts().contains(changa));
+
+
+    }
+
 }
