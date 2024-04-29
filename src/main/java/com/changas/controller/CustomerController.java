@@ -8,7 +8,10 @@ import com.changas.service.AuthService;
 import com.changas.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -24,7 +27,7 @@ public class CustomerController {
     @GetMapping("/hirings")
     public ResponseEntity<ApiResponse<List<HiringOverviewDTO>>> getHiredTransactions() throws CustomerNotAuthenticatedException {
         Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
-        return ResponseEntity.ok(ApiResponse.success(customerService.getHiringsFromCustomer(customer)));
+        return ResponseEntity.ok(ApiResponse.success(customerService.getTransactionsFromCustomer(customer)));
     }
 
 }

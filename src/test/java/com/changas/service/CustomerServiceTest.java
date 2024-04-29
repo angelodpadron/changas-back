@@ -32,7 +32,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    @DisplayName("Can get an overview of the hirings from a customer")
+    @DisplayName("Can get an overview of the transactions from a customer")
     void canGetAnOverviewOfTheHiringsFromACustomerTest() {
         HiringTransaction hiringTransaction = mock(HiringTransaction.class);
         Changa changa = mock(Changa.class);
@@ -40,16 +40,18 @@ public class CustomerServiceTest {
         when(hiringTransaction.getId()).thenReturn(1L);
         when(hiringTransaction.getChanga()).thenReturn(changa);
         when(hiringTransaction.getCreationDate()).thenReturn(Instant.now());
+        when(hiringTransaction.getRequester()).thenReturn(customer);
+        when(hiringTransaction.getProvider()).thenReturn(new Customer());
 
         when(changa.getId()).thenReturn(1L);
         when(changa.getTitle()).thenReturn("Changa Name");
         when(changa.getDescription()).thenReturn("Changa Description");
         when(changa.getPhotoUrl()).thenReturn("Changa Photo Url");
 
-        assertTrue(customerService.getHiringsFromCustomer(customer).isEmpty());
+        assertTrue(customerService.getTransactionsFromCustomer(customer).isEmpty());
 
         customer.saveHiringTransaction(hiringTransaction);
-        List<HiringOverviewDTO> hirings = customerService.getHiringsFromCustomer(customer);
+        List<HiringOverviewDTO> hirings = customerService.getTransactionsFromCustomer(customer);
 
         assertEquals(1, hirings.size());
 

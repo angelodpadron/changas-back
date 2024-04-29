@@ -20,13 +20,13 @@ public class Customer {
     private String email;
     private String password;
     private String photoUrl;
-    @OneToMany(mappedBy = "customer")
-    private Set<HiringTransaction> hirings = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<HiringTransaction> transactions = new HashSet<>();
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private Set<Changa> posts = new HashSet<>();
 
     public void saveHiringTransaction(HiringTransaction hiringTransaction) {
-        this.hirings.add(hiringTransaction);
+        this.transactions.add(hiringTransaction);
     }
 
     public void saveChangaPost(Changa changa) {

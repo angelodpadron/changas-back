@@ -20,7 +20,7 @@ class CustomerTest {
     @DisplayName("A user initially has no hirings")
     void aUserInitiallyHasNoHiringsTest() {
         Customer customer = new Customer();
-        assertEquals(0, customer.getHirings().size());
+        assertEquals(0, customer.getTransactions().size());
     }
 
     @Test
@@ -31,7 +31,7 @@ class CustomerTest {
 
         customer.saveHiringTransaction(hiringTransaction);
 
-        assertTrue(customer.getHirings().contains(hiringTransaction));
+        assertTrue(customer.getTransactions().contains(hiringTransaction));
 
     }
 
