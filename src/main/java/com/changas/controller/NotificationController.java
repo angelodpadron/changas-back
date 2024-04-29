@@ -1,16 +1,9 @@
 package com.changas.controller;
 
-import com.changas.dto.ApiResponse;
 import com.changas.dto.notification.HireChangaNotificationDTO;
-import com.changas.exceptions.ResourceNotFoundException;
-import com.changas.model.Notification;
-import com.changas.model.ResponseMessage;
-import com.changas.service.ChangaService;
 import com.changas.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,4 +24,5 @@ public class NotificationController {
         List <HireChangaNotificationDTO> notifications = notificationService.getAllNotifications();
         return ResponseEntity.ok().body(notifications);
     }
+
 }

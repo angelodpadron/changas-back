@@ -21,7 +21,6 @@ public class HiringTransactionService {
     private final HiringTransactionRepository transactionRepository;
     private final ChangaService changaService;
     private final AuthService authService;
-    private final NotificationService notificationService;
 
     @Transactional
     public HiringOverviewDTO hireChanga(HireChangaRequest hireChangaRequest) throws CustomerNotAuthenticatedException, ChangaNotFoundException, HiringOwnChangaException {
@@ -44,7 +43,6 @@ public class HiringTransactionService {
 
         transactionRepository.save(hiringTransaction);
         customer.saveHiringTransaction(hiringTransaction);
-        notificationService.createAndSaveNotification(changa,customer);
 
         return asHiringOverviewDTO(hiringTransaction);
 
