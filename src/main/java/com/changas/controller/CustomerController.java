@@ -3,8 +3,6 @@ package com.changas.controller;
 import com.changas.dto.ApiResponse;
 import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
-import com.changas.model.Customer;
-import com.changas.service.AuthService;
 import com.changas.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +20,15 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final AuthService authService;
 
     @GetMapping("/hirings")
     public ResponseEntity<ApiResponse<List<HiringOverviewDTO>>> getHiredTransactions() throws CustomerNotAuthenticatedException {
-        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
-        return ResponseEntity.ok(ApiResponse.success(customerService.getTransactionsFromCustomer(customer)));
+        return ResponseEntity.ok(ApiResponse.success(customerService.getAllTransactionsFromCustomer()));
+    }
+
+    @GetMapping("/pending-transactions")
+    public ResponseEntity<ApiResponse<List<HiringOverviewDTO>>> getPendingTransactions() throws CustomerNotAuthenticatedException {
+        return ResponseEntity.ok(ApiResponse.success(customerService.getPendingTransactionsAsProvider()));
     }
 
 }
