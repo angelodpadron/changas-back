@@ -94,7 +94,7 @@ class ChangaServiceTest {
     }
 
     private Customer createTestCustomer() {
-        return Customer.builder().name("Pepe").email("pepe@email.com").password("password").photoUrl("photoUrl").posts(new HashSet<>()).transactions(new HashSet<>()).build();
+        return Customer.builder().name("Pepe").email("pepe@email.com").password("password").photoUrl("photoUrl").posts(new HashSet<>()).build();
     }
 
     private CreateChangaRequest createChangaRequest() {

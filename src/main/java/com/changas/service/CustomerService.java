@@ -4,7 +4,7 @@ import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.model.Customer;
 import com.changas.model.HiringTransaction;
-import com.changas.model.TransactionStatus;
+import com.changas.model.status.TransactionStatus;
 import com.changas.repository.HiringTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,8 @@ public class CustomerService {
 
     public List<HiringOverviewDTO> getAllTransactionsFromCustomer() throws CustomerNotAuthenticatedException {
         Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
-        return toHiringTransactionDTOList(customer.getTransactions());
+        Set<HiringTransaction> transactions = hiringTransactionRepository.allCustomerTransactions(customer.getId());
+        return toHiringTransactionDTOList(transactions);
     }
 
     public List<HiringOverviewDTO> getPendingTransactionsAsProvider() throws CustomerNotAuthenticatedException {
@@ -37,18 +38,18 @@ public class CustomerService {
     private List<HiringOverviewDTO> toHiringTransactionDTOList(Set<HiringTransaction> transactions) {
         List<HiringOverviewDTO> hirings = new ArrayList<>();
 
-        transactions.forEach(hiringTransaction -> {
+        transactions.forEach(transaction -> {
             HiringOverviewDTO hiringOverview = HiringOverviewDTO
                     .builder()
-                    .hiringId(hiringTransaction.getId())
-                    .changaId(hiringTransaction.getChanga().getId())
-                    .customerId(hiringTransaction.getRequester().getId())
-                    .providerId(hiringTransaction.getProvider().getId())
-                    .changaTitle(hiringTransaction.getChanga().getTitle())
-                    .changaDescription(hiringTransaction.getChanga().getDescription())
-                    .changaPhotoUrl(hiringTransaction.getChanga().getPhotoUrl())
+                    .hiringId(transaction.getId())
+                    .changaId(transaction.getChanga().getId())
+                    .customerId(transaction.getRequester().getId())
+                    .providerId(transaction.getProvider().getId())
+                    .changaTitle(transaction.getChanga().getTitle())
+                    .changaDescription(transaction.getChanga().getDescription())
+                    .changaPhotoUrl(transaction.getChanga().getPhotoUrl())
                     .creationDate(Instant.now())
-                    .status(hiringTransaction.getStatus())
+                    .status(transaction.getStatus())
                     .build();
 
             hirings.add(hiringOverview);

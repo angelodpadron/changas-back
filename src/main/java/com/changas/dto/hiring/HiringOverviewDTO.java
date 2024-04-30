@@ -1,6 +1,6 @@
 package com.changas.dto.hiring;
 
-import com.changas.model.TransactionStatus;
+import com.changas.model.status.TransactionStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

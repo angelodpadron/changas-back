@@ -3,7 +3,6 @@ package com.changas.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -13,15 +12,9 @@ import java.util.Set;
 @Builder
 @Entity
 
-@SequenceGenerator(
-        name = "customSecuence",
-        sequenceName = "custom secuence",
-        initialValue = 5,
-        allocationSize = 1
-)
 public class Changa {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customSecuence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String description;
@@ -30,11 +23,4 @@ public class Changa {
     private Set<String> topics;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer provider;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "changa")
-    private List<Notification> changaNotifications;
-
-
-    public void addHireChangaNotification(Notification notification) {
-        this.changaNotifications.add(notification);
-    }
 }
