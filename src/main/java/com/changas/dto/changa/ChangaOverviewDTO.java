@@ -15,8 +15,9 @@ public class ChangaOverviewDTO {
     private Long id;
     private String title;
     private String description;
+    @JsonProperty(value = "photo_url")
     private String photoUrl;
     private Set<String> topics;
-    @JsonProperty("providerSummary")
+    @JsonProperty(value = "provider_summary")
     private CustomerOverviewDTO customerSummary;
 }
