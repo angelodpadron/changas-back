@@ -1,15 +1,15 @@
 package com.changas.controller;
 
 import com.changas.dto.ApiResponse;
+import com.changas.dto.customer.CustomerOverviewDTO;
 import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
+import com.changas.exceptions.customer.CustomerNotFoundException;
+import com.changas.exceptions.hiring.HiringTransactionNotFoundException;
 import com.changas.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +21,11 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
+    @GetMapping("/{customerId}")
+    public ResponseEntity<ApiResponse<CustomerOverviewDTO>> getCustomerOverview(@PathVariable Long customerId) throws CustomerNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(customerService.getCustomerOverview(customerId)));
+    }
+
     @GetMapping("/hirings")
     public ResponseEntity<ApiResponse<List<HiringOverviewDTO>>> getHiredTransactions() throws CustomerNotAuthenticatedException {
         return ResponseEntity.ok(ApiResponse.success(customerService.getAllTransactionsFromCustomer()));
@@ -29,6 +34,11 @@ public class CustomerController {
     @GetMapping("/pending-transactions")
     public ResponseEntity<ApiResponse<List<HiringOverviewDTO>>> getPendingTransactions() throws CustomerNotAuthenticatedException {
         return ResponseEntity.ok(ApiResponse.success(customerService.getPendingTransactionsAsProvider()));
+    }
+
+    @GetMapping("/hirings/{transactionId}")
+    public ResponseEntity<ApiResponse<HiringOverviewDTO>> getCustomerTransaction(@PathVariable Long transactionId) throws HiringTransactionNotFoundException, CustomerNotAuthenticatedException {
+        return ResponseEntity.ok(ApiResponse.success(customerService.getTransactionWithIdFromCustomer(transactionId)));
     }
 
 }
