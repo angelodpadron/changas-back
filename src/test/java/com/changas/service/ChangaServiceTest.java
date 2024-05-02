@@ -54,7 +54,7 @@ class ChangaServiceTest {
         when(changa2.getProvider()).thenReturn(testCustomer);
         when(changaRepository.findChangasByTopics(any())).thenReturn(new HashSet<>(List.of(changa1, changa2)));
 
-        Set<ChangaOverviewDTO> filtered = changaService.findChangaWithTopics(new HashSet<>(List.of("Plumbing", "Wielding")));
+        Set<ChangaOverviewDTO> filtered = changaService.findChangasByTopic(new HashSet<>(List.of("Plumbing", "Wielding")));
 
         assertFalse(filtered.isEmpty());
         assertEquals(2, filtered.size());
@@ -94,7 +94,7 @@ class ChangaServiceTest {
     }
 
     private Customer createTestCustomer() {
-        return Customer.builder().name("Pepe").email("pepe@email.com").password("password").photoUrl("photoUrl").posts(new HashSet<>()).hirings(new HashSet<>()).build();
+        return Customer.builder().name("Pepe").email("pepe@email.com").password("password").photoUrl("photoUrl").posts(new HashSet<>()).build();
     }
 
     private CreateChangaRequest createChangaRequest() {

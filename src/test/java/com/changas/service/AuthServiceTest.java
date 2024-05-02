@@ -129,7 +129,7 @@ class AuthServiceTest {
     }
 
     private Customer createTestCustomer() {
-        return Customer.builder().name("Pepe").email("pepe@email.com").password("password").photoUrl("photoUrl").posts(new HashSet<>()).hirings(new HashSet<>()).build();
+        return Customer.builder().name("Pepe").email("pepe@email.com").password("password").photoUrl("photoUrl").posts(new HashSet<>()).build();
     }
 
     private SignupRequest fromCustomerToSignupRequest(Customer customer) {

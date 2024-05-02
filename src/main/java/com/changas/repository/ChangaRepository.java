@@ -12,4 +12,7 @@ import java.util.Set;
 public interface ChangaRepository extends CrudRepository<Changa, Long> {
     @Query("SELECT c FROM Changa c JOIN c.topics t WHERE LOWER(t) IN :topics")
     Set<Changa> findChangasByTopics(@Param("topics") Set<String> topics);
+    Set<Changa> findByTitleContainingIgnoreCase(String title);
+    @Query("SELECT c FROM Changa c JOIN c.topics t WHERE LOWER(c.title) LIKE LOWER(:title) AND LOWER(t) IN :topics")
+    Set<Changa> findByTitleAndTopics(@Param("title") String title, @Param("topics") Set<String> topics);
 }

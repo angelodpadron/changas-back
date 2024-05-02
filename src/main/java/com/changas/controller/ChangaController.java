@@ -1,5 +1,6 @@
 package com.changas.controller;
 
+
 import com.changas.dto.ApiResponse;
 import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.changa.CreateChangaRequest;
@@ -8,6 +9,7 @@ import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.HiringOwnChangaException;
 import com.changas.exceptions.changa.ChangaNotFoundException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
+import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.service.ChangaService;
 import com.changas.service.HiringTransactionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -29,10 +32,11 @@ public class ChangaController {
     private final ChangaService changaService;
     private final HiringTransactionService hiringTransactionService;
 
+
     @Operation(summary = "Returns all the changas")
     @GetMapping
     public ResponseEntity<ApiResponse<List<ChangaOverviewDTO>>> getAllChangas() {
-        return ResponseEntity.ok(ApiResponse.success(changaService.getAllChangas()));
+        return ResponseEntity.ok(ApiResponse.success(changaService.getAllChangaOverviews()));
     }
 
     @Operation(summary = "Return a changa with a given id")
@@ -41,10 +45,12 @@ public class ChangaController {
         return ResponseEntity.ok(ApiResponse.success(changaService.getChangaOverviewById(changaId)));
     }
 
-    @Operation(summary = "Return changas that contain certain topics")
+    @Operation(summary = "Return changas that meet the search criteria")
     @GetMapping("/findBy")
-    public ResponseEntity<ApiResponse<Set<ChangaOverviewDTO>>> findChangasWithTopics(@RequestParam Set<String> topics) {
-        return ResponseEntity.ok(ApiResponse.success(changaService.findChangaWithTopics(topics)));
+    public ResponseEntity<ApiResponse<Set<ChangaOverviewDTO>>> findChangasWithTopics(
+            @RequestParam(required = false) Optional<String> title,
+            @RequestParam(required = false) Optional<Set<String>> topics) throws BadSearchRequestException {
+        return ResponseEntity.ok(ApiResponse.success(changaService.findChangaByCriteriaHandler(title, topics)));
     }
 
     @Operation(summary = "Hire a give changa")
@@ -57,6 +63,14 @@ public class ChangaController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<ChangaOverviewDTO>> createChanga(@RequestBody @Valid CreateChangaRequest createChangaRequest) throws CustomerNotAuthenticatedException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(changaService.createChanga(createChangaRequest)));
+
     }
+
+    @Operation(summary = "Search changa by title")
+    @GetMapping("/search/{title}")
+    public ResponseEntity<Set<ChangaOverviewDTO>> searchChangaByTitle(@PathVariable String title){
+        return ResponseEntity.ok(changaService.findChangasByTitle(title));
+    }
+
 
 }

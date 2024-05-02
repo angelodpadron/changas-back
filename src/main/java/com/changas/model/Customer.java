@@ -1,15 +1,17 @@
 package com.changas.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
 @Entity
 public class Customer {
@@ -20,14 +22,9 @@ public class Customer {
     private String email;
     private String password;
     private String photoUrl;
-    @OneToMany(mappedBy = "customer")
-    private Set<HiringTransaction> hirings = new HashSet<>();
+
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private Set<Changa> posts = new HashSet<>();
-
-    public void saveHiringTransaction(HiringTransaction hiringTransaction) {
-        this.hirings.add(hiringTransaction);
-    }
 
     public void saveChangaPost(Changa changa) {
         this.posts.add(changa);

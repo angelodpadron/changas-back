@@ -11,6 +11,7 @@ import java.util.Set;
 @Setter
 @Builder
 @Entity
+
 public class Changa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +23,4 @@ public class Changa {
     private Set<String> topics;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer provider;
-
-
 }
