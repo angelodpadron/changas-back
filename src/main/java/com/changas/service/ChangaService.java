@@ -63,7 +63,7 @@ public class ChangaService {
     public Set<ChangaOverviewDTO> findChangasByTopic(Set<String> topics) {
         Set<ChangaOverviewDTO> overviews = new HashSet<>();
         changaRepository
-                .findChangasByTopics(topics.stream().map(String::toLowerCase).collect(Collectors.toSet()))
+                .findChangasByTopics(toLowerCaseSet(topics), topics.size())
                 .forEach(changa -> overviews.add(toChangaOverviewDTO(changa)));
         return overviews;
     }
@@ -80,7 +80,7 @@ public class ChangaService {
         Set<ChangaOverviewDTO> overviews = new HashSet<>();
         String titleWildCard = "%" + title + "%";
         changaRepository
-                .findByTitleAndTopics(titleWildCard, topics)
+                .findByTitleAndTopics(titleWildCard, toLowerCaseSet(topics), topics.size())
                 .forEach(changa -> overviews.add(toChangaOverviewDTO(changa)));
         return overviews;
     }
@@ -105,6 +105,10 @@ public class ChangaService {
         changaRepository.save(changa);
 
         return toChangaOverviewDTO(changa);
+    }
+
+    private Set<String> toLowerCaseSet(Set<String> set) {
+        return set.stream().map(String::toLowerCase).collect(Collectors.toSet());
     }
 
     private ChangaOverviewDTO toChangaOverviewDTO(Changa changa) {

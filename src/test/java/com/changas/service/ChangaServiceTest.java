@@ -52,7 +52,7 @@ class ChangaServiceTest {
 
         when(changa1.getProvider()).thenReturn(testCustomer);
         when(changa2.getProvider()).thenReturn(testCustomer);
-        when(changaRepository.findChangasByTopics(any())).thenReturn(new HashSet<>(List.of(changa1, changa2)));
+        when(changaRepository.findChangasByTopics(any(), any(Integer.class))).thenReturn(new HashSet<>(List.of(changa1, changa2)));
 
         Set<ChangaOverviewDTO> filtered = changaService.findChangasByTopic(new HashSet<>(List.of("Plumbing", "Wielding")));
 

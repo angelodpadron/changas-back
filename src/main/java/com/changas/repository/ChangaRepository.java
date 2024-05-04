@@ -10,9 +10,12 @@ import java.util.Set;
 
 @Repository
 public interface ChangaRepository extends CrudRepository<Changa, Long> {
-    @Query("SELECT c FROM Changa c JOIN c.topics t WHERE LOWER(t) IN :topics")
-    Set<Changa> findChangasByTopics(@Param("topics") Set<String> topics);
+//    @Query("SELECT c FROM Changa c JOIN c.topics t WHERE LOWER(t) IN :topics")
+    @Query("SELECT c FROM Changa c JOIN c.topics t WHERE LOWER(t) IN :topics GROUP BY c HAVING COUNT(DISTINCT t) = :size")
+    Set<Changa> findChangasByTopics(@Param("topics") Set<String> topics, @Param("size") int size);
     Set<Changa> findByTitleContainingIgnoreCase(String title);
-    @Query("SELECT c FROM Changa c JOIN c.topics t WHERE LOWER(c.title) LIKE LOWER(:title) AND LOWER(t) IN :topics")
-    Set<Changa> findByTitleAndTopics(@Param("title") String title, @Param("topics") Set<String> topics);
+    @Query("SELECT c FROM Changa c JOIN c.topics t WHERE LOWER(c.title) LIKE LOWER(:title) " +
+           "AND LOWER(t) IN :topics " +
+           "GROUP BY c HAVING COUNT(DISTINCT t) = :size")
+    Set<Changa> findByTitleAndTopics(@Param("title") String title, @Param("topics") Set<String> topics, @Param("size") int size);
 }
