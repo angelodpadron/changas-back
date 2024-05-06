@@ -22,6 +22,6 @@ public interface HiringTransactionRepository extends CrudRepository<HiringTransa
     Set<HiringTransaction> allCustomerTransactions(@Param("party_id") Long id);
 
     @EntityGraph("transaction-with-full-details")
-    @Query("SELECT t FROM HiringTransaction t WHERE t.id = :transaction_id AND t.provider.id = :customer_id OR t.requester.id = :customer_id")
+    @Query("SELECT t FROM HiringTransaction t WHERE t.id = :transaction_id AND (t.provider.id = :customer_id OR t.requester.id = :customer_id)")
     Optional<HiringTransaction> findCustomerTransactionById(@Param("transaction_id") Long transactionId, @Param("customer_id") Long customerId);
 }
