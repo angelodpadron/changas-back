@@ -7,10 +7,8 @@ import com.changas.model.status.TransactionResponse;
 import com.changas.model.status.TransactionStatus;
 import com.changas.model.status.TransactionStatusHandler;
 
-public class AwaitingProviderConfirmationHandler extends TransactionStatusHandler {
-
-    private final TransactionStatus statusToHandle = TransactionStatus.AWAITING_PROVIDER_CONFIRMATION;
-
+public class AwaitingRequesterConfirmationHandler extends TransactionStatusHandler {
+    private final TransactionStatus statusToHandle = TransactionStatus.AWAITING_REQUESTER_CONFIRMATION;
     @Override
     public boolean canHandle(TransactionStatus status) {
         return status == statusToHandle;
@@ -22,19 +20,18 @@ public class AwaitingProviderConfirmationHandler extends TransactionStatusHandle
         checkIfCanAnswer(transaction, customer);
 
         switch (response) {
-            case ACCEPT -> transaction.setStatus(TransactionStatus.AWAITING_REQUESTER_CONFIRMATION);
-            case DECLINE -> transaction.setStatus(TransactionStatus.DECLINED_BY_PROVIDER);
+            case ACCEPT -> transaction.setStatus(TransactionStatus.ACCEPTED_BY_REQUESTER);
+            case DECLINE -> transaction.setStatus(TransactionStatus.DECLINED_BY_REQUESTER);
         }
-
     }
 
     private void checkIfCanAnswer(HiringTransaction transaction, Customer customer) throws IllegalTransactionOperationException {
-        if (!isProvider(transaction, customer)) {
-            throw new IllegalTransactionOperationException("Only the provider can respond in the current transaction status");
+        if (!isRequester(transaction, customer)) {
+            throw new IllegalTransactionOperationException("Only the requester can respond in the current transaction status");
         }
     }
 
-    private boolean isProvider(HiringTransaction transaction, Customer customer) {
-        return customer.getId().equals(transaction.getProvider().getId());
+    private boolean isRequester(HiringTransaction transaction, Customer customer) {
+        return customer.getId().equals(transaction.getRequester().getId());
     }
 }
