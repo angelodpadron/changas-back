@@ -30,9 +30,10 @@ public class HiringOverviewDTO {
     private String changaPhotoUrl;
     @JsonProperty(value = "creation_date")
     private Instant creationDate;
-    @JsonProperty(value = "work_details")
-    private String workDetails;
-    @JsonProperty(value = "work_area_photo_url")
-    private String workAreaPhotoUrl;
+    @JsonProperty(value = "work_area_details")
+    private WorkAreaDetailsDTO workAreaDetailsDTO;
+    @JsonProperty(value = "provider_proposal")
+    private ProviderProposalDTO providerProposalDTO;
     private TransactionStatus status;
+
 }

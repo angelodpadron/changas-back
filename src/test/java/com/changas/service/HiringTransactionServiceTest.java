@@ -1,7 +1,8 @@
 package com.changas.service;
 
-import com.changas.dto.changa.HireChangaRequest;
+import com.changas.dto.hiring.HireChangaRequest;
 import com.changas.dto.hiring.HiringOverviewDTO;
+import com.changas.dto.hiring.WorkAreaDetailsDTO;
 import com.changas.exceptions.HiringOwnChangaException;
 import com.changas.exceptions.changa.ChangaNotFoundException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
@@ -37,6 +38,7 @@ class HiringTransactionServiceTest {
     private Customer customer;
     private Customer provider;
     private Changa changa;
+    private final WorkAreaDetailsDTO workAreaDetails = new WorkAreaDetailsDTO("photo_url", "work_area_description");
 
     @BeforeEach
     void setUp() {
@@ -55,7 +57,7 @@ class HiringTransactionServiceTest {
         when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(customer));
         when(changaService.getChangaById(changa.getId())).thenReturn(Optional.of(changa));
 
-        HireChangaRequest hireChangaRequest = new HireChangaRequest(changa.getId(), "Work Details", "Work Area Photo URL");
+        HireChangaRequest hireChangaRequest = new HireChangaRequest(changa.getId(), this.workAreaDetails);
         HiringOverviewDTO hiringOverviewDTO = hiringTransactionService.hireChanga(hireChangaRequest);
 
         assertNotNull(hiringOverviewDTO);
@@ -72,7 +74,7 @@ class HiringTransactionServiceTest {
         when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(customer));
         when(changaService.getChangaById(changa.getId())).thenReturn(Optional.of(changa));
 
-        HireChangaRequest hireChangaRequest = new HireChangaRequest(changa.getId(), "Work Details", "Work Area Photo URL");
+        HireChangaRequest hireChangaRequest = new HireChangaRequest(changa.getId(), this.workAreaDetails);
 
         assertThrows(HiringOwnChangaException.class, () -> hiringTransactionService.hireChanga(hireChangaRequest));
     }
@@ -84,7 +86,7 @@ class HiringTransactionServiceTest {
         when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(customer));
         when(changaService.getChangaById(any())).thenReturn(Optional.empty());
 
-        HireChangaRequest hireChangaRequest = new HireChangaRequest(1L, "Work Details", "Work Area Photo URL");
+        HireChangaRequest hireChangaRequest = new HireChangaRequest(1L, this.workAreaDetails);
 
         assertThrows(ChangaNotFoundException.class, () -> hiringTransactionService.hireChanga(hireChangaRequest));
     }
@@ -94,7 +96,7 @@ class HiringTransactionServiceTest {
     void hiringAChangaWithoutAuthTest() {
         when(authService.getCustomerLoggedIn()).thenReturn(Optional.empty());
 
-        HireChangaRequest hireChangaRequest = new HireChangaRequest(1L, "Work Details", "Work Area Photo URL");
+        HireChangaRequest hireChangaRequest = new HireChangaRequest(1L, this.workAreaDetails);
 
         assertThrows(CustomerNotAuthenticatedException.class, () -> hiringTransactionService.hireChanga(hireChangaRequest));
     }

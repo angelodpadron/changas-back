@@ -6,5 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record HiringResponseRequest(
         @JsonProperty(value = "transaction_id")
         Long transactionId,
-        TransactionResponse response
+        TransactionResponse response,
+        @JsonProperty(value = "provider_proposal")
+        ProviderProposalDTO providerProposal
 ){}
