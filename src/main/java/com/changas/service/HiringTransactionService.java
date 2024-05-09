@@ -2,7 +2,8 @@ package com.changas.service;
 
 import com.changas.dto.hiring.HireChangaRequest;
 import com.changas.dto.hiring.HiringOverviewDTO;
-import com.changas.dto.hiring.HiringResponseRequest;
+import com.changas.dto.hiring.ProviderProposalDTO;
+import com.changas.dto.hiring.response.HiringResponse;
 import com.changas.exceptions.HiringOwnChangaException;
 import com.changas.exceptions.changa.ChangaNotFoundException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
@@ -58,15 +59,15 @@ public class HiringTransactionService {
     }
 
     @Transactional
-    public HiringOverviewDTO answerChangaRequest(HiringResponseRequest hiringResponseRequest) throws CustomerNotAuthenticatedException, HiringTransactionNotFoundException, IllegalTransactionOperationException, TransactionStatusHandlerException {
+    public HiringOverviewDTO respondChangaRequest(HiringResponse response) throws CustomerNotAuthenticatedException, HiringTransactionNotFoundException, IllegalTransactionOperationException, TransactionStatusHandlerException {
         Customer customer = getCustomerLoggedIn();
-        HiringTransaction transaction = getHiringTransaction(hiringResponseRequest.transactionId());
+        HiringTransaction transaction = getHiringTransaction(response.getTransactionId());
 
         TransactionStatusHandler
                 .getHandlerFor(transaction.getStatus())
-                .handleTransaction(transaction, hiringResponseRequest.response(), customer);
+                .handleTransaction(transaction, response.getResponse(), customer);
 
-        updateProviderProposalIfNeeded(hiringResponseRequest, customer, transaction);
+        updateProviderProposalIfRequired(response, customer, transaction);
 
         transactionRepository.save(transaction);
 
@@ -79,11 +80,17 @@ public class HiringTransactionService {
         }
     }
 
-    private void updateProviderProposalIfNeeded(HiringResponseRequest request, Customer customer, HiringTransaction transaction) {
-        if (request.providerProposal() != null && customer.getId().equals(transaction.getProvider().getId())) {
-            ProviderProposal proposal = new ProviderProposal();
-            proposal.setMessage(request.providerProposal().message());
-            proposal.setPrice(request.providerProposal().price());
+    private void updateProviderProposalIfRequired(HiringResponse request, Customer customer, HiringTransaction transaction) {
+
+        ProviderProposalDTO proposalDTO = request.getProviderProposal();
+        boolean isProvider = customer.getId().equals(transaction.getProvider().getId());
+
+        if (proposalDTO != null && isProvider) {
+            ProviderProposal proposal = ProviderProposal
+                    .builder()
+                    .message(proposalDTO.message())
+                    .price(proposalDTO.price())
+                    .build();
             transaction.setProviderProposal(proposal);
         }
     }
@@ -105,5 +112,6 @@ public class HiringTransactionService {
                 .getChangaById(changaId)
                 .orElseThrow(() -> new ChangaNotFoundException(changaId));
     }
+
 
 }

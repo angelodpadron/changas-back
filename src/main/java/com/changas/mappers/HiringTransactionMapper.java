@@ -14,8 +14,9 @@ public class HiringTransactionMapper {
         return HiringOverviewDTO
                 .builder()
                 .hiringId(transaction.getId())
-                .providerId(transaction.getId())
+                .providerId(transaction.getProvider().getId())
                 .customerId(transaction.getRequester().getId())
+                .changaId(transaction.getChanga().getId())
                 .creationDate(transaction.getCreationDate())
                 .status(transaction.getStatus())
                 .changaTitle(transaction.getChanga().getTitle())
