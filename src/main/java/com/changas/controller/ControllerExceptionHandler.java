@@ -3,6 +3,7 @@ package com.changas.controller;
 import com.changas.dto.ApiError;
 import com.changas.dto.ApiResponse;
 import com.changas.exceptions.changa.ChangaNotFoundException;
+import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
 import com.changas.exceptions.customer.CustomerAuthenticationException;
 import com.changas.exceptions.customer.CustomerNotFoundException;
@@ -24,7 +25,7 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(asApiErrorResponse(e.getMessage()));
     }
 
-    @ExceptionHandler({CustomerAlreadyRegisteredException.class, BadSearchRequestException.class, IllegalTransactionOperationException.class})
+    @ExceptionHandler({CustomerAlreadyRegisteredException.class, BadSearchRequestException.class, IllegalTransactionOperationException.class, UnauthorizedChangaEditException.class})
     public ResponseEntity<ApiResponse<?>> handleBadRequestException(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(asApiErrorResponse(e.getMessage()));
     }

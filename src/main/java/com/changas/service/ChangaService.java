@@ -2,8 +2,10 @@ package com.changas.service;
 
 import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.changa.CreateChangaRequest;
+import com.changas.dto.changa.UpdateChangaRequest;
 import com.changas.dto.customer.CustomerOverviewDTO;
 import com.changas.exceptions.changa.ChangaNotFoundException;
+import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.model.Changa;
@@ -105,6 +107,26 @@ public class ChangaService {
         changaRepository.save(changa);
 
         return toChangaOverviewDTO(changa);
+    }
+
+    @Transactional
+    public ChangaOverviewDTO updateChanga(Long changaId, UpdateChangaRequest request) throws CustomerNotAuthenticatedException, ChangaNotFoundException, UnauthorizedChangaEditException {
+        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
+        Changa changa = getChangaById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
+
+        if (!customer.getId().equals(changa.getProvider().getId())) {
+            throw new UnauthorizedChangaEditException();
+        }
+
+        request.getTitle().ifPresent(changa::setTitle);
+        request.getDescription().ifPresent(changa::setDescription);
+        request.getPhotoUrl().ifPresent(changa::setPhotoUrl);
+        request.getTopics().ifPresent(changa::setTopics);
+
+        changaRepository.save(changa);
+
+        return toChangaOverviewDTO(changa);
+
     }
 
     private Set<String> toLowerCaseSet(Set<String> set) {
