@@ -37,8 +37,15 @@ public class HiringTransaction {
     private Customer provider;
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
-    private String workDetails;
-    private String workAreaPhotoUrl;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "work_area_details_id", nullable = false)
+    private WorkAreaDetails workAreaDetails;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "provider_proposal_id")
+    private ProviderProposal providerProposal;
+
     private Instant creationDate;
 
 }

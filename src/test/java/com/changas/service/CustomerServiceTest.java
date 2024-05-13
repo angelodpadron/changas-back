@@ -2,9 +2,7 @@ package com.changas.service;
 
 import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
-import com.changas.model.Changa;
-import com.changas.model.Customer;
-import com.changas.model.HiringTransaction;
+import com.changas.model.*;
 import com.changas.repository.HiringTransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,6 +50,8 @@ public class CustomerServiceTest {
         when(transaction.getRequester()).thenReturn(requester);
         when(transaction.getProvider()).thenReturn(provider);
         when(transaction.getChanga()).thenReturn(changa);
+        when(transaction.getWorkAreaDetails()).thenReturn(new WorkAreaDetails());
+        when(transaction.getProviderProposal()).thenReturn(new ProviderProposal());
         when(transactionRepository.allCustomerTransactions(any())).thenReturn(new HashSet<>(List.of(transaction)));
 
         List<HiringOverviewDTO> hirings = customerService.getAllTransactionsFromCustomer();

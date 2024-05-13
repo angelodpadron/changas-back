@@ -16,24 +16,6 @@ class CustomerTest {
         assertEquals(0, customer.getPosts().size());
     }
 
-//    @Test
-//    @DisplayName("A user initially has no hirings")
-//    void aUserInitiallyHasNoHiringsTest() {
-//        Customer customer = new Customer();
-//        assertEquals(0, customer.getTransactions().size());
-//    }
-//
-//    @Test
-//    @DisplayName("A user can save a hiring transaction")
-//    void aUserCanHireAChangaTest() {
-//        Customer customer = new Customer();
-//        HiringTransaction hiringTransaction = mock(HiringTransaction.class);
-//
-//        customer.saveHiringTransaction(hiringTransaction);
-//
-//        assertTrue(customer.getTransactions().contains(hiringTransaction));
-//    }
-
     @Test
     @DisplayName("A user can save a changa")
     void aUserCanCreateAChangaTest() {

@@ -4,7 +4,7 @@ package com.changas.controller;
 import com.changas.dto.ApiResponse;
 import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.changa.CreateChangaRequest;
-import com.changas.dto.changa.HireChangaRequest;
+import com.changas.dto.hiring.HireChangaRequest;
 import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.HiringOwnChangaException;
 import com.changas.exceptions.changa.ChangaNotFoundException;

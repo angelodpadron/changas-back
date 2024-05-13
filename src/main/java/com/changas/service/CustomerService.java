@@ -5,6 +5,7 @@ import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.customer.CustomerNotFoundException;
 import com.changas.exceptions.hiring.HiringTransactionNotFoundException;
+import com.changas.mappers.HiringTransactionMapper;
 import com.changas.model.Customer;
 import com.changas.model.HiringTransaction;
 import com.changas.model.status.TransactionStatus;
@@ -13,10 +14,12 @@ import com.changas.repository.HiringTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.changas.mappers.CustomerMapper.toCustomerOverviewDTO;
+import static com.changas.mappers.HiringTransactionMapper.toHiringOverviewDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -51,36 +54,8 @@ public class CustomerService {
         return toCustomerOverviewDTO(customer);
     }
 
-    private CustomerOverviewDTO toCustomerOverviewDTO(Customer customer) {
-        return CustomerOverviewDTO
-                .builder()
-                .name(customer.getName())
-                .email(customer.getEmail())
-                .photoUrl(customer.getPhotoUrl())
-                .build();
-    }
-
-    private HiringOverviewDTO toHiringOverviewDTO(HiringTransaction transaction) {
-        return HiringOverviewDTO
-                .builder()
-                .hiringId(transaction.getId())
-                .changaId(transaction.getChanga().getId())
-                .customerId(transaction.getRequester().getId())
-                .providerId(transaction.getProvider().getId())
-                .changaTitle(transaction.getChanga().getTitle())
-                .changaDescription(transaction.getChanga().getDescription())
-                .changaPhotoUrl(transaction.getChanga().getPhotoUrl())
-                .creationDate(Instant.now())
-                .workDetails(transaction.getWorkDetails())
-                .workAreaPhotoUrl(transaction.getWorkAreaPhotoUrl())
-                .status(transaction.getStatus())
-                .build();
-    }
-
     private List<HiringOverviewDTO> toHiringTransactionDTOList(Set<HiringTransaction> transactions) {
-        List<HiringOverviewDTO> hirings = new ArrayList<>();
-        transactions.forEach(transaction -> hirings.add(toHiringOverviewDTO(transaction)));
-        return hirings;
+        return transactions.stream().map(HiringTransactionMapper::toHiringOverviewDTO).collect(Collectors.toList());
     }
 
 
