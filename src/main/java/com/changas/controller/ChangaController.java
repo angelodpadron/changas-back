@@ -74,5 +74,10 @@ public class ChangaController {
         return ResponseEntity.ok(ApiResponse.success(changaService.updateChanga(changaId, updateRequest)));
     }
 
+    @Operation(summary = "Delete a changa")
+    @DeleteMapping("/{changaId}/delete")
+    public ResponseEntity<ApiResponse<ChangaOverviewDTO>> deleteChanga(@PathVariable Long changaId) throws CustomerNotAuthenticatedException, UnauthorizedChangaEditException, ChangaNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(changaService.deactivateChanga(changaId)));
+    }
 
 }

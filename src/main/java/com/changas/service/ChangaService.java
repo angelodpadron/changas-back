@@ -46,20 +46,11 @@ public class ChangaService {
     }
 
     public Set<ChangaOverviewDTO> findChangaByCriteriaHandler(Optional<String> title, Optional<Set<String>> topics) throws BadSearchRequestException {
-        if (title.isPresent() && topics.isPresent()) {
-            return findChangasByTitleAndTopics(title.get(), topics.get());
-        }
-
-        if (title.isPresent()) {
-            return findChangasByTitle(title.get());
-        }
-
-        if (topics.isPresent()) {
-            return findChangasByTopic(topics.get());
-        }
+        if (title.isPresent() && topics.isPresent()) return findChangasByTitleAndTopics(title.get(), topics.get());
+        if (title.isPresent()) return findChangasByTitle(title.get());
+        if (topics.isPresent()) return findChangasByTopic(topics.get());
 
         throw new BadSearchRequestException();
-
     }
 
     public Set<ChangaOverviewDTO> findChangasByTopic(Set<String> topics) {
@@ -101,6 +92,7 @@ public class ChangaService {
                 .photoUrl(request.photoUrl())
                 .topics(request.topics())
                 .provider(customer)
+                .available(true)
                 .build();
 
         customer.saveChangaPost(changa);
@@ -114,9 +106,7 @@ public class ChangaService {
         Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
         Changa changa = getChangaById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
 
-        if (!customer.getId().equals(changa.getProvider().getId())) {
-            throw new UnauthorizedChangaEditException();
-        }
+        checkIfCanEdit(customer, changa);
 
         request.getTitle().ifPresent(changa::setTitle);
         request.getDescription().ifPresent(changa::setDescription);
@@ -126,7 +116,24 @@ public class ChangaService {
         changaRepository.save(changa);
 
         return toChangaOverviewDTO(changa);
+    }
 
+    public ChangaOverviewDTO deactivateChanga(Long changaId) throws CustomerNotAuthenticatedException, ChangaNotFoundException, UnauthorizedChangaEditException {
+        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
+        Changa changa = getChangaById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
+
+        checkIfCanEdit(customer, changa);
+
+        changa.setAvailable(false);
+        changaRepository.save(changa);
+
+        return toChangaOverviewDTO(changa);
+    }
+
+    private void checkIfCanEdit(Customer customer, Changa changa) throws UnauthorizedChangaEditException {
+        if (!customer.getId().equals(changa.getProvider().getId())) {
+            throw new UnauthorizedChangaEditException();
+        }
     }
 
     private Set<String> toLowerCaseSet(Set<String> set) {
@@ -147,8 +154,10 @@ public class ChangaService {
                         .photoUrl(changa.getProvider()
                                 .getPhotoUrl())
                         .build())
+                .available(changa.getAvailable())
                 .build();
     }
+
 
 
 }

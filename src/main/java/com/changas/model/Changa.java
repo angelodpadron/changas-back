@@ -23,4 +23,5 @@ public class Changa {
     private Set<String> topics;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer provider;
+    private Boolean available;
 }

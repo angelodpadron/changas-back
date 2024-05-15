@@ -4,19 +4,19 @@ INSERT INTO customer (id, name, email, photo_url) VALUES
                                                       (20, 'Jane Smith', 'jane.smith@example.com', 'https://cdn.download.ams.birds.cornell.edu/api/v1/asset/362635561/900');
 
 -- Insertar changas con un proveedor (cliente)
-INSERT INTO changa (id, title, description, photo_url, provider_id) VALUES
-                                                                        (1, 'Plomero', 'Reparo lavabos con fugas y más', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 10),
-                                                                        (2, 'Pintura de Dormitorio', 'Ofrezco servicios de pintura interior.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 20);
+INSERT INTO changa (id, title, description, photo_url, provider_id, available) VALUES
+                                                                        (1, 'Plomero', 'Reparo lavabos con fugas y más', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 10, TRUE),
+                                                                        (2, 'Pintura de Dormitorio', 'Ofrezco servicios de pintura interior.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 20, TRUE);
 
 -- Insertar más changas para John Doe (cliente con ID 10)
-INSERT INTO changa (id, title, description, photo_url, provider_id) VALUES
-                                                                        (3, 'Electricista', 'Realizo instalaciones eléctricas y reparaciones.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 10),
-                                                                        (4, 'Reparación de Electrodomésticos', 'Soluciono problemas con electrodomésticos.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 10);
+INSERT INTO changa (id, title, description, photo_url, provider_id, available) VALUES
+                                                                        (3, 'Electricista', 'Realizo instalaciones eléctricas y reparaciones.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 10, TRUE),
+                                                                        (4, 'Reparación de Electrodomésticos', 'Soluciono problemas con electrodomésticos.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 10, TRUE);
 
 -- Insertar más changas para Jane Smith (cliente con ID 20)
-INSERT INTO changa (id, title, description, photo_url, provider_id) VALUES
-                                                                        (5, 'Jardinería', 'Cuido y diseño jardines.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 20),
-                                                                        (6, 'Limpieza de Ventanas', 'Limpio ventanas de forma profesional.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 20);
+INSERT INTO changa (id, title, description, photo_url, provider_id, available) VALUES
+                                                                        (5, 'Jardinería', 'Cuido y diseño jardines.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 20, TRUE),
+                                                                        (6, 'Limpieza de Ventanas', 'Limpio ventanas de forma profesional.', 'https://i0.wp.com/plopdo.com/wp-content/uploads/2021/11/9859.jpg?resize=640%2C400&ssl=1', 20, TRUE);
 
 -- Insertar temas para las changas
 INSERT INTO changa_topics (changa_id, topics) VALUES
