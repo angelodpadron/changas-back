@@ -4,10 +4,12 @@ package com.changas.controller;
 import com.changas.dto.ApiResponse;
 import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.changa.CreateChangaRequest;
+import com.changas.dto.changa.UpdateChangaRequest;
 import com.changas.dto.hiring.HireChangaRequest;
 import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.HiringOwnChangaException;
 import com.changas.exceptions.changa.ChangaNotFoundException;
+import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.service.ChangaService;
@@ -66,11 +68,16 @@ public class ChangaController {
 
     }
 
-    @Operation(summary = "Search changa by title")
-    @GetMapping("/search/{title}")
-    public ResponseEntity<Set<ChangaOverviewDTO>> searchChangaByTitle(@PathVariable String title){
-        return ResponseEntity.ok(changaService.findChangasByTitle(title));
+    @Operation(summary = "Update a changa")
+    @PutMapping("/{changaId}/edit")
+    public ResponseEntity<ApiResponse<ChangaOverviewDTO>> editChanga(@PathVariable Long changaId, @RequestBody @Valid UpdateChangaRequest updateRequest) throws CustomerNotAuthenticatedException, UnauthorizedChangaEditException, ChangaNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(changaService.updateChanga(changaId, updateRequest)));
     }
 
+    @Operation(summary = "Delete a changa")
+    @DeleteMapping("/{changaId}/delete")
+    public ResponseEntity<ApiResponse<ChangaOverviewDTO>> deleteChanga(@PathVariable Long changaId) throws CustomerNotAuthenticatedException, UnauthorizedChangaEditException, ChangaNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(changaService.deactivateChanga(changaId)));
+    }
 
 }

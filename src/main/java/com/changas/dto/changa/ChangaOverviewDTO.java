@@ -20,4 +20,5 @@ public class ChangaOverviewDTO {
     private Set<String> topics;
     @JsonProperty(value = "provider_summary")
     private CustomerOverviewDTO customerSummary;
+    private boolean available;
 }

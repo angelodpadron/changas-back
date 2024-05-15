@@ -2,8 +2,10 @@ package com.changas.service;
 
 import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.changa.CreateChangaRequest;
+import com.changas.dto.changa.UpdateChangaRequest;
 import com.changas.dto.customer.CustomerOverviewDTO;
 import com.changas.exceptions.changa.ChangaNotFoundException;
+import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.model.Changa;
@@ -44,20 +46,11 @@ public class ChangaService {
     }
 
     public Set<ChangaOverviewDTO> findChangaByCriteriaHandler(Optional<String> title, Optional<Set<String>> topics) throws BadSearchRequestException {
-        if (title.isPresent() && topics.isPresent()) {
-            return findChangasByTitleAndTopics(title.get(), topics.get());
-        }
-
-        if (title.isPresent()) {
-            return findChangasByTitle(title.get());
-        }
-
-        if (topics.isPresent()) {
-            return findChangasByTopic(topics.get());
-        }
+        if (title.isPresent() && topics.isPresent()) return findChangasByTitleAndTopics(title.get(), topics.get());
+        if (title.isPresent()) return findChangasByTitle(title.get());
+        if (topics.isPresent()) return findChangasByTopic(topics.get());
 
         throw new BadSearchRequestException();
-
     }
 
     public Set<ChangaOverviewDTO> findChangasByTopic(Set<String> topics) {
@@ -99,12 +92,48 @@ public class ChangaService {
                 .photoUrl(request.photoUrl())
                 .topics(request.topics())
                 .provider(customer)
+                .available(true)
                 .build();
 
         customer.saveChangaPost(changa);
         changaRepository.save(changa);
 
         return toChangaOverviewDTO(changa);
+    }
+
+    @Transactional
+    public ChangaOverviewDTO updateChanga(Long changaId, UpdateChangaRequest request) throws CustomerNotAuthenticatedException, ChangaNotFoundException, UnauthorizedChangaEditException {
+        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
+        Changa changa = getChangaById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
+
+        checkIfCanEdit(customer, changa);
+
+        request.getTitle().ifPresent(changa::setTitle);
+        request.getDescription().ifPresent(changa::setDescription);
+        request.getPhotoUrl().ifPresent(changa::setPhotoUrl);
+        request.getTopics().ifPresent(changa::setTopics);
+
+        changaRepository.save(changa);
+
+        return toChangaOverviewDTO(changa);
+    }
+
+    public ChangaOverviewDTO deactivateChanga(Long changaId) throws CustomerNotAuthenticatedException, ChangaNotFoundException, UnauthorizedChangaEditException {
+        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
+        Changa changa = getChangaById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
+
+        checkIfCanEdit(customer, changa);
+
+        changa.setAvailable(false);
+        changaRepository.save(changa);
+
+        return toChangaOverviewDTO(changa);
+    }
+
+    private void checkIfCanEdit(Customer customer, Changa changa) throws UnauthorizedChangaEditException {
+        if (!customer.getId().equals(changa.getProvider().getId())) {
+            throw new UnauthorizedChangaEditException();
+        }
     }
 
     private Set<String> toLowerCaseSet(Set<String> set) {
@@ -125,8 +154,10 @@ public class ChangaService {
                         .photoUrl(changa.getProvider()
                                 .getPhotoUrl())
                         .build())
+                .available(changa.getAvailable())
                 .build();
     }
+
 
 
 }
