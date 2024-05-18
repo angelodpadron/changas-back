@@ -14,8 +14,8 @@ import java.util.Set;
 @Repository
 public interface HiringTransactionRepository extends CrudRepository<HiringTransaction, Long> {
     @EntityGraph("transaction-with-full-details")
-    @Query("SELECT t FROM HiringTransaction t WHERE t.provider.id = :provider_id AND t.status = :status")
-    Set<HiringTransaction> findByProviderIdAndStatus(@Param("provider_id") Long id, @Param("status")TransactionStatus status);
+    @Query("SELECT t FROM HiringTransaction t WHERE (t.provider.id = :customer_id OR t.requester.id = :customer_id)  AND t.status = :status")
+    Set<HiringTransaction> findByProviderIdAndStatus(@Param("customer_id") Long id, @Param("status")TransactionStatus status);
 
     @EntityGraph("transaction-with-full-details")
     @Query("SELECT t FROM HiringTransaction t WHERE t.provider.id = :party_id OR t.requester.id =:party_id")

@@ -32,23 +32,26 @@ public class CustomerService {
     private final HiringTransactionRepository hiringTransactionRepository;
 
     public List<HiringOverviewDTO> getAllTransactionsFromCustomer() throws CustomerNotAuthenticatedException {
-        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
+        Customer customer = getCustomerAuthenticated();
         Set<HiringTransaction> transactions = hiringTransactionRepository.allCustomerTransactions(customer.getId());
         return toHiringTransactionDTOList(transactions);
     }
 
-    public List<HiringOverviewDTO> getPendingTransactionsAsProvider() throws CustomerNotAuthenticatedException {
-        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
-        Set<HiringTransaction> pendingTransactions =
-                hiringTransactionRepository.findByProviderIdAndStatus(customer.getId(), TransactionStatus.AWAITING_PROVIDER_CONFIRMATION);
-        return toHiringTransactionDTOList(pendingTransactions);
+    public HiringOverviewDTO getTransactionWithIdFromCustomer(Long transactionId) throws HiringTransactionNotFoundException, CustomerNotAuthenticatedException {
+        Customer customer = getCustomerAuthenticated();
+        HiringTransaction transaction = hiringTransactionRepository.findCustomerTransactionById(transactionId, customer.getId()).orElseThrow(() -> new HiringTransactionNotFoundException(transactionId));
+        return toHiringOverviewDTO(transaction);
+    }
+
+    public List<HiringOverviewDTO> getTransactionWithStatus(TransactionStatus status) throws CustomerNotAuthenticatedException {
+        Customer customer = getCustomerAuthenticated();
+        Set<HiringTransaction> transactionsWithStatus = hiringTransactionRepository.findByProviderIdAndStatus(customer.getId(), status);
+        return toHiringTransactionDTOList(transactionsWithStatus);
 
     }
 
-    public HiringOverviewDTO getTransactionWithIdFromCustomer(Long transactionId) throws HiringTransactionNotFoundException, CustomerNotAuthenticatedException {
-        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
-        HiringTransaction transaction = hiringTransactionRepository.findCustomerTransactionById(transactionId, customer.getId()).orElseThrow(() -> new HiringTransactionNotFoundException(transactionId));
-        return toHiringOverviewDTO(transaction);
+    private Customer getCustomerAuthenticated() throws CustomerNotAuthenticatedException {
+        return authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
     }
 
     public CustomerOverviewDTO getCustomerOverview(Long customerId) throws CustomerNotFoundException {
@@ -62,7 +65,7 @@ public class CustomerService {
 
     @Transactional
     public CustomerOverviewDTO updateProfile(UpdateCustomerRequest request) throws CustomerNotAuthenticatedException {
-        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
+        Customer customer = getCustomerAuthenticated();
 
         if (request.getName() != null) customer.setName(request.getName());
         if (request.getPhotoUrl() != null) customer.setPhotoUrl(request.getPhotoUrl());
