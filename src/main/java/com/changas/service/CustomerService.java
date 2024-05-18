@@ -1,6 +1,7 @@
 package com.changas.service;
 
 import com.changas.dto.customer.CustomerOverviewDTO;
+import com.changas.dto.customer.UpdateCustomerRequest;
 import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.customer.CustomerNotFoundException;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -86,18 +86,15 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerOverviewDTO updateProfile(Customer customerLogged, CustomerOverviewDTO updateCustomer) {
-        if(customerLogged.getName() != null) {
-            customerLogged.setName(updateCustomer.getName());
-        }
-        if(updateCustomer.getEmail() != null) {
-            customerLogged.setEmail(updateCustomer.getEmail());
-        }
-        if(updateCustomer.getPhotoUrl() !=null){
-            customerLogged.setPhotoUrl(updateCustomer.getPhotoUrl());
-        }
+    public CustomerOverviewDTO updateProfile(UpdateCustomerRequest request) throws CustomerNotAuthenticatedException {
+        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
 
-        return toCustomerOverviewDTO(customerLogged);
+        if (request.getName() != null) customer.setName(request.getName());
+        if (request.getPhotoUrl() != null) customer.setPhotoUrl(request.getPhotoUrl());
+
+        customerRepository.save(customer);
+
+        return toCustomerOverviewDTO(customer);
 
     }
 }
