@@ -12,10 +12,12 @@ import com.changas.repository.CustomerRepository;
 import com.changas.repository.HiringTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -83,5 +85,19 @@ public class CustomerService {
         return hirings;
     }
 
+    @Transactional
+    public CustomerOverviewDTO updateProfile(Customer customerLogged, CustomerOverviewDTO updateCustomer) {
+        if(customerLogged.getName() != null) {
+            customerLogged.setName(updateCustomer.getName());
+        }
+        if(updateCustomer.getEmail() != null) {
+            customerLogged.setEmail(updateCustomer.getEmail());
+        }
+        if(updateCustomer.getPhotoUrl() !=null){
+            customerLogged.setPhotoUrl(updateCustomer.getPhotoUrl());
+        }
 
+        return toCustomerOverviewDTO(customerLogged);
+
+    }
 }
