@@ -1,6 +1,7 @@
 package com.changas.service;
 
 import com.changas.dto.customer.CustomerOverviewDTO;
+import com.changas.dto.customer.UpdateCustomerRequest;
 import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.customer.CustomerNotFoundException;
@@ -13,6 +14,7 @@ import com.changas.repository.CustomerRepository;
 import com.changas.repository.HiringTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -58,5 +60,16 @@ public class CustomerService {
         return transactions.stream().map(HiringTransactionMapper::toHiringOverviewDTO).collect(Collectors.toList());
     }
 
+    @Transactional
+    public CustomerOverviewDTO updateProfile(UpdateCustomerRequest request) throws CustomerNotAuthenticatedException {
+        Customer customer = authService.getCustomerLoggedIn().orElseThrow(CustomerNotAuthenticatedException::new);
 
+        if (request.getName() != null) customer.setName(request.getName());
+        if (request.getPhotoUrl() != null) customer.setPhotoUrl(request.getPhotoUrl());
+
+        customerRepository.save(customer);
+
+        return toCustomerOverviewDTO(customer);
+
+    }
 }

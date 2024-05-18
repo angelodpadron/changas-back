@@ -2,6 +2,7 @@ package com.changas.controller;
 
 import com.changas.dto.ApiResponse;
 import com.changas.dto.customer.CustomerOverviewDTO;
+import com.changas.dto.customer.UpdateCustomerRequest;
 import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.customer.CustomerNotFoundException;
@@ -41,4 +42,8 @@ public class CustomerController {
         return ResponseEntity.ok(ApiResponse.success(customerService.getTransactionWithIdFromCustomer(transactionId)));
     }
 
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<CustomerOverviewDTO>> editProfile(@RequestBody UpdateCustomerRequest updateRequest) throws CustomerNotAuthenticatedException {
+        return ResponseEntity.ok(ApiResponse.success(customerService.updateProfile(updateRequest)));
+    }
 }
