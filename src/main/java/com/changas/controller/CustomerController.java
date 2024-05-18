@@ -7,6 +7,7 @@ import com.changas.dto.hiring.HiringOverviewDTO;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.customer.CustomerNotFoundException;
 import com.changas.exceptions.hiring.HiringTransactionNotFoundException;
+import com.changas.model.status.TransactionStatus;
 import com.changas.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +33,14 @@ public class CustomerController {
         return ResponseEntity.ok(ApiResponse.success(customerService.getAllTransactionsFromCustomer()));
     }
 
-    @GetMapping("/pending-transactions")
-    public ResponseEntity<ApiResponse<List<HiringOverviewDTO>>> getPendingTransactions() throws CustomerNotAuthenticatedException {
-        return ResponseEntity.ok(ApiResponse.success(customerService.getPendingTransactionsAsProvider()));
-    }
-
     @GetMapping("/hirings/{transactionId}")
     public ResponseEntity<ApiResponse<HiringOverviewDTO>> getCustomerTransaction(@PathVariable Long transactionId) throws HiringTransactionNotFoundException, CustomerNotAuthenticatedException {
         return ResponseEntity.ok(ApiResponse.success(customerService.getTransactionWithIdFromCustomer(transactionId)));
+    }
+
+    @GetMapping("/hirings/filter")
+    public ResponseEntity<ApiResponse<List<HiringOverviewDTO>>> getTransactionsWithStatus(@RequestParam TransactionStatus status) throws CustomerNotAuthenticatedException {
+        return ResponseEntity.ok(ApiResponse.success(customerService.getTransactionWithStatus(status)));
     }
 
     @PutMapping("/profile")
