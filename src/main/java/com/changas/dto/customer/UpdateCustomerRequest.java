@@ -2,12 +2,22 @@ package com.changas.dto.customer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Setter;
+
+import java.util.Optional;
 
 @AllArgsConstructor
-@Data
+@Setter
 public class UpdateCustomerRequest {
     private String name;
     @JsonProperty(value = "photo_url")
     private String photoUrl;
+
+    public Optional<String> getName() {
+        return Optional.of(name);
+    }
+
+    public Optional<String> getPhotoUrl() {
+        return Optional.of(photoUrl);
+    }
 }

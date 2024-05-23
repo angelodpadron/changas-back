@@ -1,4 +1,4 @@
-package com.changas.controller;
+package com.changas.controller.advisor;
 
 import com.changas.dto.ApiError;
 import com.changas.dto.ApiResponse;

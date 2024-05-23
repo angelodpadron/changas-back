@@ -2,7 +2,6 @@ package com.changas.service;
 
 import com.changas.dto.hiring.HireChangaRequest;
 import com.changas.dto.hiring.HiringOverviewDTO;
-import com.changas.dto.hiring.ProviderProposalDTO;
 import com.changas.dto.hiring.response.HiringResponse;
 import com.changas.exceptions.HiringOwnChangaException;
 import com.changas.exceptions.changa.ChangaNotFoundException;
@@ -11,14 +10,12 @@ import com.changas.exceptions.hiring.HiringTransactionNotFoundException;
 import com.changas.exceptions.status.IllegalTransactionOperationException;
 import com.changas.exceptions.status.TransactionStatusHandlerException;
 import com.changas.model.*;
-import com.changas.model.status.TransactionStatus;
+import com.changas.model.status.TransactionOperation;
 import com.changas.model.status.TransactionStatusHandler;
 import com.changas.repository.HiringTransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 
 import static com.changas.mappers.HiringTransactionMapper.toHiringOverviewDTO;
 
@@ -31,11 +28,8 @@ public class HiringTransactionService {
 
     @Transactional
     public HiringOverviewDTO hireChanga(HireChangaRequest hireChangaRequest) throws CustomerNotAuthenticatedException, ChangaNotFoundException, HiringOwnChangaException {
-        Customer customer = getCustomerLoggedIn();
+        Customer requester = authService.getCustomerAuthenticated();
         Changa changa = getChanga(hireChangaRequest.changaId());
-        Customer provider = changa.getProvider();
-
-        checkIfCanHire(customer, provider);
 
         WorkAreaDetails workAreaDetails = WorkAreaDetails
                 .builder()
@@ -43,15 +37,7 @@ public class HiringTransactionService {
                 .photoUrl(hireChangaRequest.workAreaDetails().photoUrl())
                 .build();
 
-        HiringTransaction hiringTransaction = HiringTransaction
-                .builder()
-                .changa(changa)
-                .provider(provider)
-                .requester(customer)
-                .workAreaDetails(workAreaDetails)
-                .creationDate(Instant.now())
-                .status(TransactionStatus.AWAITING_PROVIDER_CONFIRMATION)
-                .build();
+        HiringTransaction hiringTransaction = HiringTransaction.generateTransactionFor(changa, requester, workAreaDetails);
 
         transactionRepository.save(hiringTransaction);
 
@@ -60,45 +46,27 @@ public class HiringTransactionService {
 
     @Transactional
     public HiringOverviewDTO respondChangaRequest(HiringResponse response) throws CustomerNotAuthenticatedException, HiringTransactionNotFoundException, IllegalTransactionOperationException, TransactionStatusHandlerException {
-        Customer customer = getCustomerLoggedIn();
+        Customer customer = authService.getCustomerAuthenticated();
         HiringTransaction transaction = getHiringTransaction(response.getTransactionId());
+        ProviderProposal providerProposal = null;
+
+        if (response.getProviderProposal().isPresent()) {
+            providerProposal = ProviderProposal
+                    .builder()
+                    .message(response.getProviderProposal().get().message())
+                    .price(response.getProviderProposal().get().price())
+                    .build();
+        }
+
+        TransactionOperation operation = new TransactionOperation(response.getResponse(), providerProposal);
 
         TransactionStatusHandler
                 .getHandlerFor(transaction.getStatus())
-                .handleTransaction(transaction, response.getResponse(), customer);
-
-        updateProviderProposalIfRequired(response, customer, transaction);
+                .handleTransaction(transaction, operation, customer);
 
         transactionRepository.save(transaction);
 
         return toHiringOverviewDTO(transaction);
-    }
-
-    private void checkIfCanHire(Customer customer, Customer provider) throws HiringOwnChangaException {
-        if (customer.getId().equals(provider.getId())) {
-            throw new HiringOwnChangaException();
-        }
-    }
-
-    private void updateProviderProposalIfRequired(HiringResponse request, Customer customer, HiringTransaction transaction) {
-
-        ProviderProposalDTO proposalDTO = request.getProviderProposal();
-        boolean isProvider = customer.getId().equals(transaction.getProvider().getId());
-
-        if (proposalDTO != null && isProvider) {
-            ProviderProposal proposal = ProviderProposal
-                    .builder()
-                    .message(proposalDTO.message())
-                    .price(proposalDTO.price())
-                    .build();
-            transaction.setProviderProposal(proposal);
-        }
-    }
-
-    private Customer getCustomerLoggedIn() throws CustomerNotAuthenticatedException {
-        return authService
-                .getCustomerLoggedIn()
-                .orElseThrow(CustomerNotAuthenticatedException::new);
     }
 
     private HiringTransaction getHiringTransaction(Long transactionId) throws HiringTransactionNotFoundException {

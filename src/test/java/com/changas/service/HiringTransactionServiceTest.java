@@ -54,7 +54,7 @@ class HiringTransactionServiceTest {
         when(provider.getId()).thenReturn(2L);
         when(changa.getId()).thenReturn(1L);
         when(changa.getProvider()).thenReturn(provider);  // The changa is not created by the customer interested in hiring
-        when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(customer));
+        when(authService.getCustomerAuthenticated()).thenReturn(customer);
         when(changaService.getChangaById(changa.getId())).thenReturn(Optional.of(changa));
 
         HireChangaRequest hireChangaRequest = new HireChangaRequest(changa.getId(), this.workAreaDetails);
@@ -67,11 +67,11 @@ class HiringTransactionServiceTest {
 
     @Test
     @DisplayName("Hiring an owned changa throws an exception")
-    void hiringOwnChangaExceptionTest() {
+    void hiringOwnChangaExceptionTest() throws CustomerNotAuthenticatedException {
         when(customer.getId()).thenReturn(1L);
         when(changa.getId()).thenReturn(1L);
         when(changa.getProvider()).thenReturn(customer);  // The changa is created by the customer interested in hiring
-        when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(customer));
+        when(authService.getCustomerAuthenticated()).thenReturn(customer);
         when(changaService.getChangaById(changa.getId())).thenReturn(Optional.of(changa));
 
         HireChangaRequest hireChangaRequest = new HireChangaRequest(changa.getId(), this.workAreaDetails);
@@ -81,9 +81,9 @@ class HiringTransactionServiceTest {
 
     @Test
     @DisplayName("Hiring a unavailable changa throws an exception")
-    void hiringAnUnavailableChangaTest() {
+    void hiringAnUnavailableChangaTest() throws CustomerNotAuthenticatedException {
         when(customer.getId()).thenReturn(1L);
-        when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(customer));
+        when(authService.getCustomerAuthenticated()).thenReturn(customer);
         when(changaService.getChangaById(any())).thenReturn(Optional.empty());
 
         HireChangaRequest hireChangaRequest = new HireChangaRequest(1L, this.workAreaDetails);
@@ -93,10 +93,11 @@ class HiringTransactionServiceTest {
 
     @Test
     @DisplayName("Hiring a changa without being authenticated throws an exception")
-    void hiringAChangaWithoutAuthTest() {
-        when(authService.getCustomerLoggedIn()).thenReturn(Optional.empty());
+    void hiringAChangaWithoutAuthTest() throws CustomerNotAuthenticatedException {
 
         HireChangaRequest hireChangaRequest = new HireChangaRequest(1L, this.workAreaDetails);
+
+        when(authService.getCustomerAuthenticated()).thenThrow(CustomerNotAuthenticatedException.class);
 
         assertThrows(CustomerNotAuthenticatedException.class, () -> hiringTransactionService.hireChanga(hireChangaRequest));
     }

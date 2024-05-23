@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,7 +63,7 @@ class ChangaServiceTest {
     @DisplayName("A created changa gets saved into the customer's posts collection")
     void savingCreatedChangaOnCustomerTest() throws Exception {
         CreateChangaRequest createChangaRequest = createChangaRequest();
-        when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(testCustomer));
+        when(authService.getCustomerAuthenticated()).thenReturn(testCustomer);
 
         changaService.createChanga(createChangaRequest);
 
@@ -76,7 +75,7 @@ class ChangaServiceTest {
     @DisplayName("A successful changa creation returns an overview of it")
     void getChangaOverviewAfterCreationSuccessTest() throws Exception {
         CreateChangaRequest createChangaRequest = createChangaRequest();
-        when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(testCustomer));
+        when(authService.getCustomerAuthenticated()).thenReturn(testCustomer);
 
         ChangaOverviewDTO changaOverviewDTO = changaService.createChanga(createChangaRequest);
 
@@ -85,9 +84,9 @@ class ChangaServiceTest {
 
     @Test
     @DisplayName("Attempting to create a changa without an authenticated user throws an exception")
-    void createChangaWithoutAuthenticatedUser() {
+    void createChangaWithoutAuthenticatedUser() throws CustomerNotAuthenticatedException {
         CreateChangaRequest createChangaRequest = createChangaRequest();
-        when(authService.getCustomerLoggedIn()).thenReturn(Optional.empty());
+        when(authService.getCustomerAuthenticated()).thenThrow(CustomerNotAuthenticatedException.class);
 
         assertThrows(CustomerNotAuthenticatedException.class, () -> changaService.createChanga(createChangaRequest));
 

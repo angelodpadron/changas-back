@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,9 +30,9 @@ public class CustomerServiceTest {
     private CustomerService customerService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws CustomerNotAuthenticatedException {
         Customer customer = new Customer();
-        when(authService.getCustomerLoggedIn()).thenReturn(Optional.of(customer));
+        when(authService.getCustomerAuthenticated()).thenReturn(customer);
     }
 
     @Test

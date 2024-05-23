@@ -3,7 +3,8 @@ package com.changas.model.status.handlers;
 import com.changas.exceptions.status.IllegalTransactionOperationException;
 import com.changas.model.Customer;
 import com.changas.model.HiringTransaction;
-import com.changas.model.status.TransactionResponse;
+import com.changas.model.ProviderProposal;
+import com.changas.model.status.TransactionOperation;
 import com.changas.model.status.TransactionStatus;
 import com.changas.model.status.TransactionStatusHandler;
 
@@ -17,12 +18,21 @@ public class AwaitingProviderConfirmationHandler extends TransactionStatusHandle
     }
 
     @Override
-    public void handleTransaction(HiringTransaction transaction, TransactionResponse response, Customer customer) throws IllegalTransactionOperationException {
+    public void handleTransaction(HiringTransaction transaction, TransactionOperation operation, Customer customer) throws IllegalTransactionOperationException {
         checkIfCanOperate(transaction, customer);
         checkIfCanAnswer(transaction, customer);
 
-        switch (response) {
-            case ACCEPT -> transaction.setStatus(TransactionStatus.AWAITING_REQUESTER_CONFIRMATION);
+        switch (operation.getResponse()) {
+            case ACCEPT -> {
+
+                ProviderProposal proposal = operation
+                        .getProviderProposal()
+                        .orElseThrow(() -> new IllegalTransactionOperationException("Need to provide a full proposal to accept request as provider"));
+
+                transaction.setProviderProposal(proposal);
+                transaction.setStatus(TransactionStatus.AWAITING_REQUESTER_CONFIRMATION);
+
+            }
             case DECLINE -> transaction.setStatus(TransactionStatus.DECLINED_BY_PROVIDER);
         }
 

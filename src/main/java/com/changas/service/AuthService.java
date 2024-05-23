@@ -2,8 +2,9 @@ package com.changas.service;
 
 import com.changas.dto.auth.LoginRequest;
 import com.changas.dto.auth.SignupRequest;
-import com.changas.exceptions.customer.CustomerAuthenticationException;
 import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
+import com.changas.exceptions.customer.CustomerAuthenticationException;
+import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.model.Customer;
 import com.changas.repository.CustomerRepository;
 import com.changas.utils.JWTHelper;
@@ -23,20 +24,24 @@ import java.util.Optional;
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final CustomerRepository customerRepository;
-
-
     private final PasswordEncoder passwordEncoder;
 
     public void signup(@NotNull SignupRequest request) throws CustomerAlreadyRegisteredException {
-        String email = request.email();
-        validateCustomerDoesNotExist(email);
-        String hashedPassword = passwordEncoder.encode(request.password());
+        checkIfCustomerExists(request.email());
 
-        customerRepository.save(Customer.builder().name(request.name()).email(email).password(hashedPassword).photoUrl(request.photoUrl()).build());
+        Customer customer = Customer
+                .builder()
+                .name(request.name())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .photoUrl(request.photoUrl())
+                .build();
+
+        customerRepository.save(customer);
 
     }
 
-    private void validateCustomerDoesNotExist(String email) throws CustomerAlreadyRegisteredException {
+    private void checkIfCustomerExists(String email) throws CustomerAlreadyRegisteredException {
         Optional<Customer> optionalCustomer = customerRepository.findByEmail(email);
 
         if (optionalCustomer.isPresent()) {
@@ -46,16 +51,17 @@ public class AuthService {
 
     public String login(LoginRequest request) throws CustomerAuthenticationException {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return this.getCustomerLoggedIn().map(customer -> JWTHelper.generateToken(customer.getId(), customer.getEmail(), customer.getName(), customer.getPhotoUrl())).orElseThrow(() -> new CustomerAuthenticationException("Failed to retrieve user on login"));
-
+        return customerRepository
+                .findByEmail(request.email())
+                .map(customer -> JWTHelper.generateToken(customer.getId(), customer.getEmail(), customer.getName(), customer.getPhotoUrl()))
+                .orElseThrow(() -> new CustomerAuthenticationException("Failed to retrieve user on login"));
     }
 
-    public Optional<Customer> getCustomerLoggedIn() {
+    public Customer getCustomerAuthenticated() throws CustomerNotAuthenticatedException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return customerRepository.findByEmail(authentication.getName());
+        return customerRepository.findByEmail(authentication.getName()).orElseThrow(CustomerNotAuthenticatedException::new);
     }
 
 }
