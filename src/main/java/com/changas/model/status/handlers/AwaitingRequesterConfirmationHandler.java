@@ -3,7 +3,7 @@ package com.changas.model.status.handlers;
 import com.changas.exceptions.status.IllegalTransactionOperationException;
 import com.changas.model.Customer;
 import com.changas.model.HiringTransaction;
-import com.changas.model.status.TransactionResponse;
+import com.changas.model.status.TransactionOperation;
 import com.changas.model.status.TransactionStatus;
 import com.changas.model.status.TransactionStatusHandler;
 
@@ -15,11 +15,11 @@ public class AwaitingRequesterConfirmationHandler extends TransactionStatusHandl
     }
 
     @Override
-    public void handleTransaction(HiringTransaction transaction, TransactionResponse response, Customer customer) throws IllegalTransactionOperationException {
+    public void handleTransaction(HiringTransaction transaction, TransactionOperation operation, Customer customer) throws IllegalTransactionOperationException {
         checkIfCanOperate(transaction, customer);
         checkIfCanAnswer(transaction, customer);
 
-        switch (response) {
+        switch (operation.getResponse()) {
             case ACCEPT -> transaction.setStatus(TransactionStatus.ACCEPTED_BY_REQUESTER);
             case DECLINE -> transaction.setStatus(TransactionStatus.DECLINED_BY_REQUESTER);
         }

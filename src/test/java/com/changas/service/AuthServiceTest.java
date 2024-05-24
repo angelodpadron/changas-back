@@ -4,6 +4,7 @@ import com.changas.dto.auth.LoginRequest;
 import com.changas.dto.auth.SignupRequest;
 import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
 import com.changas.exceptions.customer.CustomerAuthenticationException;
+import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.model.Customer;
 import com.changas.repository.CustomerRepository;
 import org.junit.jupiter.api.*;
@@ -76,14 +77,9 @@ class AuthServiceTest {
     @DisplayName("A successful login returns an access token")
     void loginSuccessTest() throws CustomerAuthenticationException {
         LoginRequest loginRequest = fromCustomerToLoginRequest(customer);
-        Authentication authentication = mock(Authentication.class);
+        when(customerRepository.findByEmail(any())).thenReturn(Optional.of(customer));
 
-        when(authenticationManager.authenticate(any())).thenReturn(authentication);
-        when(customerRepository.findByEmail("user@example.com")).thenReturn(Optional.of(customer));
-        when(authentication.getName()).thenReturn("user@example.com");
-
-        String token;
-        token = authService.login(loginRequest);
+        String token = authService.login(loginRequest);
 
         assertNotNull(token);
     }
@@ -102,7 +98,7 @@ class AuthServiceTest {
 
     @Test
     @DisplayName("Can retrieve the current logged in user")
-    void retrieveCurrentLoggedInUserTest() {
+    void retrieveCurrentLoggedInUserTest() throws CustomerNotAuthenticatedException {
         // Mocks for Authentication and SecurityContext
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
@@ -117,11 +113,11 @@ class AuthServiceTest {
         when(customerRepository.findByEmail(customerEmail)).thenReturn(Optional.of(expectedCustomer));
 
         // Exec
-        Optional<Customer> result = authService.getCustomerLoggedIn();
+        Customer result = authService.getCustomerAuthenticated();
 
         // Assert
-        assertTrue(result.isPresent());
-        assertEquals(customerEmail, result.get().getEmail());
+        assertNotNull(result);
+        assertEquals(customerEmail, result.getEmail());
         verify(customerRepository).findByEmail(customerEmail);
 
         // Clean up

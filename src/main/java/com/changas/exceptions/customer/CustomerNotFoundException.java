@@ -5,7 +5,4 @@ public class CustomerNotFoundException extends Exception {
         super("No customer found with id " + customerId);
     }
 
-    public CustomerNotFoundException(String customerEmail) {
-        super("No customer found with email " + customerEmail);
-    }
 }

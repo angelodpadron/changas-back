@@ -2,6 +2,7 @@ package com.changas.model;
 
 import com.changas.exceptions.status.IllegalTransactionOperationException;
 import com.changas.exceptions.status.TransactionStatusHandlerException;
+import com.changas.model.status.TransactionOperation;
 import com.changas.model.status.TransactionResponse;
 import com.changas.model.status.TransactionStatus;
 import com.changas.model.status.TransactionStatusHandler;
@@ -58,11 +59,13 @@ class TransactionStatusHandlerTest {
         Customer externalCustomer = mock(Customer.class);
         when(externalCustomer.getId()).thenReturn(3L);
 
+        TransactionOperation operation = new TransactionOperation(TransactionResponse.ACCEPT, new ProviderProposal());
+
         assertThrows(
                 IllegalTransactionOperationException.class,
                 () -> TransactionStatusHandler
                         .getHandlerFor(status)
-                        .handleTransaction(transaction, TransactionResponse.ACCEPT, externalCustomer));
+                        .handleTransaction(transaction, operation, externalCustomer));
 
     }
 
@@ -70,6 +73,8 @@ class TransactionStatusHandlerTest {
     @Test
     void onlyAProviderCanAnswerAnAwaitingProviderConfirmationTransactionTest() {
         TransactionStatus status = TransactionStatus.AWAITING_PROVIDER_CONFIRMATION;
+        TransactionOperation operation = new TransactionOperation(TransactionResponse.ACCEPT, new ProviderProposal());
+
 
         when(transaction.getStatus()).thenReturn(status);
 
@@ -77,7 +82,7 @@ class TransactionStatusHandlerTest {
                 IllegalTransactionOperationException.class,
                 () -> TransactionStatusHandler
                         .getHandlerFor(status)
-                        .handleTransaction(transaction, TransactionResponse.ACCEPT, requester));
+                        .handleTransaction(transaction, operation, requester));
 
     }
 
@@ -88,9 +93,11 @@ class TransactionStatusHandlerTest {
 
         when(transaction.getStatus()).thenReturn(status);
 
+        TransactionOperation operation = new TransactionOperation(TransactionResponse.ACCEPT, new ProviderProposal());
+
         TransactionStatusHandler
                 .getHandlerFor(status)
-                .handleTransaction(transaction, TransactionResponse.ACCEPT, provider);
+                .handleTransaction(transaction, operation, provider);
 
         verify(transaction).setStatus(TransactionStatus.AWAITING_REQUESTER_CONFIRMATION);
 
@@ -100,10 +107,11 @@ class TransactionStatusHandlerTest {
     @Test
     void transactionAwaitingProviderResponseChangesToDeclinedTest() throws TransactionStatusHandlerException, IllegalTransactionOperationException {
         TransactionStatus status = TransactionStatus.AWAITING_PROVIDER_CONFIRMATION;
+        TransactionOperation operation = new TransactionOperation(TransactionResponse.DECLINE, new ProviderProposal());
 
         TransactionStatusHandler
                 .getHandlerFor(status)
-                .handleTransaction(transaction, TransactionResponse.DECLINE, provider);
+                .handleTransaction(transaction, operation, provider);
 
         verify(transaction).setStatus(TransactionStatus.DECLINED_BY_PROVIDER);
 
@@ -113,22 +121,25 @@ class TransactionStatusHandlerTest {
     @Test
     void providerAttempToRespondAnAwaitingRequesterConfirmationTest() {
         TransactionStatus status = TransactionStatus.AWAITING_REQUESTER_CONFIRMATION;
+        TransactionOperation operation = new TransactionOperation(TransactionResponse.ACCEPT, new ProviderProposal());
 
         assertThrows(
                 IllegalTransactionOperationException.class,
                 () -> TransactionStatusHandler
                         .getHandlerFor(status)
-                        .handleTransaction(transaction, TransactionResponse.ACCEPT, provider));
+                        .handleTransaction(transaction, operation, provider));
     }
 
     @DisplayName("A transaction awaiting the response of requester changes it's status to 'accepted by requester'")
     @Test
     void requesterAcceptsTransactionTest() throws TransactionStatusHandlerException, IllegalTransactionOperationException {
         TransactionStatus status = TransactionStatus.AWAITING_REQUESTER_CONFIRMATION;
+        TransactionOperation operation = new TransactionOperation(TransactionResponse.ACCEPT, new ProviderProposal());
+
 
         TransactionStatusHandler
                 .getHandlerFor(status)
-                .handleTransaction(transaction, TransactionResponse.ACCEPT, requester);
+                .handleTransaction(transaction, operation, requester);
 
         verify(transaction).setStatus(TransactionStatus.ACCEPTED_BY_REQUESTER);
 
@@ -138,10 +149,11 @@ class TransactionStatusHandlerTest {
     @Test
     void requesterDeclinesTransactionTest() throws TransactionStatusHandlerException, IllegalTransactionOperationException {
         TransactionStatus status = TransactionStatus.AWAITING_REQUESTER_CONFIRMATION;
+        TransactionOperation operation = new TransactionOperation(TransactionResponse.DECLINE, new ProviderProposal());
 
         TransactionStatusHandler
                 .getHandlerFor(status)
-                .handleTransaction(transaction, TransactionResponse.DECLINE, requester);
+                .handleTransaction(transaction, operation, requester);
 
         verify(transaction).setStatus(TransactionStatus.DECLINED_BY_REQUESTER);
 
@@ -151,12 +163,14 @@ class TransactionStatusHandlerTest {
     @Test
     void declinedTransactionCannotChangeItsStatusTest() {
         TransactionStatus status = TransactionStatus.DECLINED_BY_PROVIDER;
+        TransactionOperation operation = new TransactionOperation(TransactionResponse.ACCEPT, new ProviderProposal());
+
 
         assertThrows(
                 IllegalTransactionOperationException.class,
                 () -> TransactionStatusHandler
                         .getHandlerFor(status)
-                        .handleTransaction(transaction, TransactionResponse.ACCEPT, provider));
+                        .handleTransaction(transaction, operation, provider));
     }
 
 }
