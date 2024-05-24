@@ -75,8 +75,10 @@ public class ChangaService {
                 .collect(Collectors.toSet());
     }
 
-    public Optional<Changa> getChangaById(Long changaId) {
-        return changaRepository.findById(changaId);
+    public Changa getChangaById(Long changaId) throws ChangaNotFoundException {
+        return changaRepository
+                .findById(changaId)
+                .orElseThrow(() -> new ChangaNotFoundException(changaId));
     }
 
     @Transactional
@@ -94,7 +96,7 @@ public class ChangaService {
     @Transactional
     public ChangaOverviewDTO updateChanga(Long changaId, UpdateChangaRequest request) throws CustomerNotAuthenticatedException, ChangaNotFoundException, UnauthorizedChangaEditException {
         Customer customer = authService.getCustomerAuthenticated();
-        Changa changa = getChangaById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
+        Changa changa = getChangaById(changaId);
 
         checkIfCanEdit(customer, changa);
 
@@ -110,7 +112,7 @@ public class ChangaService {
 
     public ChangaOverviewDTO deactivateChanga(Long changaId) throws CustomerNotAuthenticatedException, ChangaNotFoundException, UnauthorizedChangaEditException {
         Customer customer = authService.getCustomerAuthenticated();
-        Changa changa = getChangaById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
+        Changa changa = getChangaById(changaId);
 
         changa.deactivateAs(customer);
 

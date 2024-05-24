@@ -17,8 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -55,10 +53,10 @@ class HiringTransactionServiceTest {
         when(changa.getId()).thenReturn(1L);
         when(changa.getProvider()).thenReturn(provider);  // The changa is not created by the customer interested in hiring
         when(authService.getCustomerAuthenticated()).thenReturn(customer);
-        when(changaService.getChangaById(changa.getId())).thenReturn(Optional.of(changa));
+        when(changaService.getChangaById(changa.getId())).thenReturn(changa);
 
         HireChangaRequest hireChangaRequest = new HireChangaRequest(changa.getId(), this.workAreaDetails);
-        HiringOverviewDTO hiringOverviewDTO = hiringTransactionService.hireChanga(hireChangaRequest);
+        HiringOverviewDTO hiringOverviewDTO = hiringTransactionService.requestChanga(hireChangaRequest);
 
         assertNotNull(hiringOverviewDTO);
         assertEquals(TransactionStatus.AWAITING_PROVIDER_CONFIRMATION, hiringOverviewDTO.getStatus());
@@ -67,28 +65,28 @@ class HiringTransactionServiceTest {
 
     @Test
     @DisplayName("Hiring an owned changa throws an exception")
-    void hiringOwnChangaExceptionTest() throws CustomerNotAuthenticatedException {
+    void hiringOwnChangaExceptionTest() throws CustomerNotAuthenticatedException, ChangaNotFoundException {
         when(customer.getId()).thenReturn(1L);
         when(changa.getId()).thenReturn(1L);
         when(changa.getProvider()).thenReturn(customer);  // The changa is created by the customer interested in hiring
         when(authService.getCustomerAuthenticated()).thenReturn(customer);
-        when(changaService.getChangaById(changa.getId())).thenReturn(Optional.of(changa));
+        when(changaService.getChangaById(changa.getId())).thenReturn(changa);
 
         HireChangaRequest hireChangaRequest = new HireChangaRequest(changa.getId(), this.workAreaDetails);
 
-        assertThrows(HiringOwnChangaException.class, () -> hiringTransactionService.hireChanga(hireChangaRequest));
+        assertThrows(HiringOwnChangaException.class, () -> hiringTransactionService.requestChanga(hireChangaRequest));
     }
 
     @Test
     @DisplayName("Hiring a unavailable changa throws an exception")
-    void hiringAnUnavailableChangaTest() throws CustomerNotAuthenticatedException {
+    void hiringAnUnavailableChangaTest() throws CustomerNotAuthenticatedException, ChangaNotFoundException {
         when(customer.getId()).thenReturn(1L);
         when(authService.getCustomerAuthenticated()).thenReturn(customer);
-        when(changaService.getChangaById(any())).thenReturn(Optional.empty());
+        when(changaService.getChangaById(any())).thenThrow(ChangaNotFoundException.class);
 
         HireChangaRequest hireChangaRequest = new HireChangaRequest(1L, this.workAreaDetails);
 
-        assertThrows(ChangaNotFoundException.class, () -> hiringTransactionService.hireChanga(hireChangaRequest));
+        assertThrows(ChangaNotFoundException.class, () -> hiringTransactionService.requestChanga(hireChangaRequest));
     }
 
     @Test
@@ -99,7 +97,7 @@ class HiringTransactionServiceTest {
 
         when(authService.getCustomerAuthenticated()).thenThrow(CustomerNotAuthenticatedException.class);
 
-        assertThrows(CustomerNotAuthenticatedException.class, () -> hiringTransactionService.hireChanga(hireChangaRequest));
+        assertThrows(CustomerNotAuthenticatedException.class, () -> hiringTransactionService.requestChanga(hireChangaRequest));
     }
 
 }

@@ -9,13 +9,18 @@ import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.hiring.HiringTransactionNotFoundException;
 import com.changas.exceptions.status.IllegalTransactionOperationException;
 import com.changas.exceptions.status.TransactionStatusHandlerException;
+import com.changas.mappers.HiringTransactionMapper;
 import com.changas.model.*;
 import com.changas.model.status.TransactionOperation;
+import com.changas.model.status.TransactionStatus;
 import com.changas.model.status.TransactionStatusHandler;
 import com.changas.repository.HiringTransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.changas.mappers.HiringTransactionMapper.toHiringOverviewDTO;
 
@@ -27,9 +32,9 @@ public class HiringTransactionService {
     private final AuthService authService;
 
     @Transactional
-    public HiringOverviewDTO hireChanga(HireChangaRequest hireChangaRequest) throws CustomerNotAuthenticatedException, ChangaNotFoundException, HiringOwnChangaException {
+    public HiringOverviewDTO requestChanga(HireChangaRequest hireChangaRequest) throws CustomerNotAuthenticatedException, ChangaNotFoundException, HiringOwnChangaException {
         Customer requester = authService.getCustomerAuthenticated();
-        Changa changa = getChanga(hireChangaRequest.changaId());
+        Changa changa = changaService.getChangaById(hireChangaRequest.changaId());
 
         WorkAreaDetails workAreaDetails = WorkAreaDetails
                 .builder()
@@ -69,17 +74,37 @@ public class HiringTransactionService {
         return toHiringOverviewDTO(transaction);
     }
 
+    public List<HiringOverviewDTO> getTransactionsFromCustomer() throws CustomerNotAuthenticatedException {
+        Customer customer = authService.getCustomerAuthenticated();
+        return transactionRepository
+                .allTransactionsFromCustomer(customer.getId())
+                .stream()
+                .map(HiringTransactionMapper::toHiringOverviewDTO)
+                .collect(Collectors.toList());
+    }
+
+    public HiringOverviewDTO getTransactionFromCustomer(Long transactionId) throws CustomerNotAuthenticatedException, HiringTransactionNotFoundException {
+        Customer customer = authService.getCustomerAuthenticated();
+        return toHiringOverviewDTO(transactionRepository
+                        .findCustomerTransactionById(transactionId, customer.getId())
+                        .orElseThrow(() -> new HiringTransactionNotFoundException(transactionId)));
+    }
+
+    public List<HiringOverviewDTO> getTransactionsFromCustomerWithStatus(TransactionStatus status) throws CustomerNotAuthenticatedException {
+        Customer customer = authService.getCustomerAuthenticated();
+        return transactionRepository
+                .findByCustomerIdAndStatus(customer.getId(), status)
+                .stream()
+                .map(HiringTransactionMapper::toHiringOverviewDTO)
+                .collect(Collectors.toList());
+    }
+
     private HiringTransaction getHiringTransaction(Long transactionId) throws HiringTransactionNotFoundException {
         return transactionRepository
                 .findById(transactionId)
                 .orElseThrow(() -> new HiringTransactionNotFoundException(transactionId));
     }
 
-    private Changa getChanga(Long changaId) throws ChangaNotFoundException {
-        return changaService
-                .getChangaById(changaId)
-                .orElseThrow(() -> new ChangaNotFoundException(changaId));
-    }
 
 
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Setter
-public class UpdateCustomerRequest {
+public class EditCustomerRequest {
     private String name;
     @JsonProperty(value = "photo_url")
     private String photoUrl;
