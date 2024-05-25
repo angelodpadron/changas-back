@@ -1,6 +1,7 @@
 package com.changas.controller;
 
 import com.changas.dto.ApiResponse;
+import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.customer.CustomerOverviewDTO;
 import com.changas.dto.customer.EditCustomerRequest;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/customers")
@@ -23,6 +26,12 @@ public class CustomerController {
     @GetMapping("/{customerId}")
     public ResponseEntity<ApiResponse<CustomerOverviewDTO>> getCustomerOverview(@PathVariable Long customerId) throws CustomerNotFoundException {
         return ResponseEntity.ok(ApiResponse.success(customerService.getCustomerOverview(customerId)));
+    }
+
+    @Operation(summary = "Gets all the changas posted by a customer")
+    @GetMapping("/{customerId}/posts")
+    public ResponseEntity<ApiResponse<List<ChangaOverviewDTO>>> getCustomerPosts(@PathVariable Long customerId) throws CustomerNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(customerService.getCustomerPosts(customerId)));
     }
 
     @Operation(summary = "Edit customer values")
