@@ -31,7 +31,7 @@ public abstract class TransactionStatusHandler {
     public abstract void handleTransaction(HiringTransaction transaction, TransactionOperation operation, Customer customer) throws IllegalTransactionOperationException;
 
     public void checkIfCanOperate(HiringTransaction transaction, Customer customer) throws IllegalTransactionOperationException {
-        Long providerId = transaction.getProvider().getId();
+        Long providerId = transaction.getChanga().getProvider().getId();
         Long requesterId = transaction.getRequester().getId();
         Long customerId = customer.getId();
 

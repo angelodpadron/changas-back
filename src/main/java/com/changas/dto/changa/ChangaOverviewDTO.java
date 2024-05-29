@@ -1,11 +1,13 @@
 package com.changas.dto.changa;
 
 import com.changas.dto.customer.CustomerOverviewDTO;
+import com.changas.dto.review.ReviewDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -20,5 +22,6 @@ public class ChangaOverviewDTO {
     private Set<String> topics;
     @JsonProperty(value = "provider_summary")
     private CustomerOverviewDTO customerSummary;
+    private List<ReviewDTO> reviews;
     private boolean available;
 }

@@ -4,6 +4,8 @@ import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -15,7 +17,7 @@ import java.util.Set;
 
 public class Changa {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String title;
     private String description;
@@ -24,6 +26,8 @@ public class Changa {
     private Set<String> topics;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer provider;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Review> reviews;
     private Boolean available;
 
     public Changa(String title, String description, String photoUrl, Set<String> topics, Customer provider) {
@@ -32,6 +36,7 @@ public class Changa {
         this.photoUrl = photoUrl;
         this.topics = topics;
         this.provider = provider;
+        this.reviews = new ArrayList<>();
         this.available = true;
     }
 

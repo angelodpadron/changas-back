@@ -7,6 +7,9 @@ import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
 import com.changas.exceptions.customer.CustomerAuthenticationException;
 import com.changas.exceptions.customer.CustomerNotFoundException;
+import com.changas.exceptions.hiring.HiringTransactionNotFoundException;
+import com.changas.exceptions.review.ReviewException;
+import com.changas.exceptions.review.ReviewNotFoundException;
 import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.exceptions.status.IllegalTransactionOperationException;
 import org.springframework.http.HttpStatus;
@@ -20,12 +23,12 @@ import java.util.Arrays;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
-    @ExceptionHandler({ChangaNotFoundException.class, CustomerNotFoundException.class})
+    @ExceptionHandler({ChangaNotFoundException.class, CustomerNotFoundException.class, HiringTransactionNotFoundException.class, ReviewNotFoundException.class})
     public ResponseEntity<ApiResponse<?>> handleNotFoundException(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(asApiErrorResponse(e.getMessage()));
     }
 
-    @ExceptionHandler({CustomerAlreadyRegisteredException.class, BadSearchRequestException.class, IllegalTransactionOperationException.class, UnauthorizedChangaEditException.class})
+    @ExceptionHandler({CustomerAlreadyRegisteredException.class, BadSearchRequestException.class, IllegalTransactionOperationException.class, UnauthorizedChangaEditException.class, ReviewException.class})
     public ResponseEntity<ApiResponse<?>> handleBadRequestException(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(asApiErrorResponse(e.getMessage()));
     }
