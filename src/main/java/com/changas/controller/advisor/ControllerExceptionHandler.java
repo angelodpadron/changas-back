@@ -16,10 +16,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -38,9 +43,31 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(asApiErrorResponse(e.getMessage()));
     }
 
-    private ApiResponse<?> asApiErrorResponse(String message, String... details) {
-        ApiError apiError = new ApiError(message, Arrays.stream(details).toList());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<?>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        List<String> detailMessages = errors.entrySet().stream()
+                .map(entry -> entry.getKey() + ": " + entry.getValue())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(asApiErrorResponse("Validation failed", detailMessages));
+    }
+
+    private ApiResponse<?> asApiErrorResponse(String message, List<String> details) {
+        ApiError apiError = new ApiError(message, details);
         return ApiResponse.error(apiError);
     }
+
+    private ApiResponse<?> asApiErrorResponse(String message) {
+        return asApiErrorResponse(message, List.of());
+    }
+
 
 }

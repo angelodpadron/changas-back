@@ -23,7 +23,7 @@ public class ReviewController {
 
     @Operation(summary = "Post a review for a given changa")
     @PostMapping
-    public ResponseEntity<ApiResponse<ReviewDTO>> createReview(@RequestBody @Valid CreateReviewRequest createReviewRequest) throws CustomerNotAuthenticatedException, ReviewException, ChangaNotFoundException {
+    public ResponseEntity<ApiResponse<ReviewDTO>> createReview(@Valid @RequestBody CreateReviewRequest createReviewRequest) throws CustomerNotAuthenticatedException, ReviewException, ChangaNotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(reviewService.createReview(createReviewRequest)));
     }
 
