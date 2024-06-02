@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +20,7 @@ public interface ReviewRepository extends CrudRepository<Review, Long> {
 
     @Query("SELECT COUNT(r.rating) FROM Review r WHERE r.changa.id = :changaId")
     Optional<Integer> getRateAmountForChanga(@Param("changaId") Long changaId);
+
+    @Query("SELECT r FROM Review r WHERE r.changa.id = :changaId")
+    List<Review> getReviewsByChanga(@Param("changaId") Long changaId);
 }

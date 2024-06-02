@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/reviews")
 @RequiredArgsConstructor
@@ -35,9 +37,16 @@ public class ReviewController {
     }
 
     @Operation(summary = "Get average review for a given changa")
-    @GetMapping("/changa/{changaId}")
+    @GetMapping("/overview/changa/{changaId}")
     public ResponseEntity<ApiResponse<AverageReview>> getAverageReview(@PathVariable Long changaId) throws ChangaNotFoundException {
         return ResponseEntity.ok(ApiResponse.success(reviewService.getAverageReview(changaId)));
     }
+
+    @Operation(summary = "Get reviews for a given changa")
+    @GetMapping("/changa/{changaId}")
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewsForChanga(@PathVariable Long changaId) throws ChangaNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(reviewService.getReviewsForChanga(changaId)));
+    }
+
 
 }

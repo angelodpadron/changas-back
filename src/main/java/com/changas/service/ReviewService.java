@@ -18,7 +18,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,5 +75,14 @@ public class ReviewService {
         Double average  = reviewRepository.getAverageRateForChanga(changa.getId()).orElse(0.0);
         Integer amount = reviewRepository.getRateAmountForChanga(changa.getId()).orElse(0);
         return new AverageReview(average, amount);
+    }
+
+    public List<ReviewDTO> getReviewsForChanga(Long changaId) throws ChangaNotFoundException {
+        Changa changa = changaService.getChangaById(changaId);
+        return reviewRepository
+                .getReviewsByChanga(changa.getId())
+                .stream()
+                .map(ReviewMapper::toReviewDTO)
+                .collect(Collectors.toList());
     }
 }
