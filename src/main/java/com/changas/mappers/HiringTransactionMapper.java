@@ -13,8 +13,8 @@ public class HiringTransactionMapper {
 
         return HiringOverviewDTO
                 .builder()
-                .hiringId(transaction.getId())
-                .providerId(transaction.getProvider().getId())
+                .id(transaction.getId())
+                .providerId(transaction.getChanga().getProvider().getId())
                 .customerId(transaction.getRequester().getId())
                 .changaId(transaction.getChanga().getId())
                 .creationDate(transaction.getCreationDate())
@@ -28,15 +28,12 @@ public class HiringTransactionMapper {
     }
 
     private static WorkAreaDetailsDTO asWorkAreaDetailsDTO(WorkAreaDetails details) {
-        return new WorkAreaDetailsDTO(details.getPhotoUrl(), details.getDescription());
+        return new WorkAreaDetailsDTO(details.getId(), details.getPhotoUrl(), details.getDescription());
     }
 
     private static ProviderProposalDTO asProviderProposalDTO(ProviderProposal proposal) {
-        // TODO: better handling when the hiring request hasn't received a proposal by the provider
-        if (proposal == null) {
-            return null;
-        }
-        return new ProviderProposalDTO(proposal.getMessage(), proposal.getPrice());
+        if (proposal == null) return null;
+        return new ProviderProposalDTO(proposal.getId(), proposal.getMessage(), proposal.getPrice());
     }
 
 }

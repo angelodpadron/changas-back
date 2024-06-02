@@ -3,24 +3,21 @@ package com.changas.model;
 import com.changas.exceptions.HiringOwnChangaException;
 import com.changas.model.status.TransactionStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @NamedEntityGraph(
         name = "transaction-with-full-details",
         attributeNodes = {
                 @NamedAttributeNode("changa"),
-                @NamedAttributeNode("requester"),
-                @NamedAttributeNode("provider")
+                @NamedAttributeNode("requester")
         }
 )
 public class HiringTransaction {
@@ -33,9 +30,6 @@ public class HiringTransaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer requester;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id", nullable = false)
-    private Customer provider;
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
     @OneToOne(cascade = CascadeType.ALL)
@@ -44,7 +38,6 @@ public class HiringTransaction {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "provider_proposal_id")
     private ProviderProposal providerProposal;
-
     private Instant creationDate;
 
     public static HiringTransaction generateTransactionFor(Changa changa, Customer requester, WorkAreaDetails workAreaDetails) throws HiringOwnChangaException {
@@ -52,7 +45,6 @@ public class HiringTransaction {
         return HiringTransaction
                 .builder()
                 .changa(changa)
-                .provider(changa.getProvider())
                 .requester(requester)
                 .workAreaDetails(workAreaDetails)
                 .status(TransactionStatus.AWAITING_PROVIDER_CONFIRMATION)
@@ -61,11 +53,9 @@ public class HiringTransaction {
     }
 
     private static void checkIfCanHire(Customer requester, Changa changa) throws HiringOwnChangaException {
-        if (requester.getId().equals(changa.getProvider().getId())) {
-            throw new HiringOwnChangaException();
-        }
+        boolean isProvider = requester.getId().equals(changa.getProvider().getId());
+        if (isProvider) throw new HiringOwnChangaException();
     }
-
 
 
 }

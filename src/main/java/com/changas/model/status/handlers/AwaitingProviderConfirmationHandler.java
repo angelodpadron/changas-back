@@ -45,6 +45,6 @@ public class AwaitingProviderConfirmationHandler extends TransactionStatusHandle
     }
 
     private boolean isProvider(HiringTransaction transaction, Customer customer) {
-        return customer.getId().equals(transaction.getProvider().getId());
+        return customer.getId().equals(transaction.getChanga().getProvider().getId());
     }
 }

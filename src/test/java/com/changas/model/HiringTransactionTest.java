@@ -27,7 +27,6 @@ class HiringTransactionTest {
         HiringTransaction hiringTransaction = HiringTransaction.generateTransactionFor(changa, requester, workAreaDetails);
 
         assertEquals(changa, hiringTransaction.getChanga());
-        assertEquals(provider, hiringTransaction.getProvider());
         assertEquals(requester, hiringTransaction.getRequester());
         assertEquals(workAreaDetails, hiringTransaction.getWorkAreaDetails());
         assertEquals(TransactionStatus.AWAITING_PROVIDER_CONFIRMATION, hiringTransaction.getStatus());

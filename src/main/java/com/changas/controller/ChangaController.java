@@ -11,7 +11,6 @@ import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.service.ChangaService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,13 +48,13 @@ public class ChangaController {
 
     @Operation(summary = "Create a new changa")
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<ChangaOverviewDTO>> createChanga(@RequestBody @Valid CreateChangaRequest createChangaRequest) throws CustomerNotAuthenticatedException {
+    public ResponseEntity<ApiResponse<ChangaOverviewDTO>> createChanga(@RequestBody CreateChangaRequest createChangaRequest) throws CustomerNotAuthenticatedException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(changaService.createChanga(createChangaRequest)));
     }
 
     @Operation(summary = "Update a changa")
     @PutMapping("/{changaId}/edit")
-    public ResponseEntity<ApiResponse<ChangaOverviewDTO>> editChanga(@PathVariable Long changaId, @RequestBody @Valid UpdateChangaRequest updateRequest) throws CustomerNotAuthenticatedException, UnauthorizedChangaEditException, ChangaNotFoundException {
+    public ResponseEntity<ApiResponse<ChangaOverviewDTO>> editChanga(@PathVariable Long changaId, @RequestBody UpdateChangaRequest updateRequest) throws CustomerNotAuthenticatedException, UnauthorizedChangaEditException, ChangaNotFoundException {
         return ResponseEntity.ok(ApiResponse.success(changaService.updateChanga(changaId, updateRequest)));
     }
 

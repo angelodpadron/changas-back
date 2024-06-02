@@ -83,7 +83,7 @@ public class HiringTransactionService {
                 .collect(Collectors.toList());
     }
 
-    public HiringOverviewDTO getTransactionFromCustomer(Long transactionId) throws CustomerNotAuthenticatedException, HiringTransactionNotFoundException {
+    public HiringOverviewDTO getHiringOverviewFromCustomer(Long transactionId) throws CustomerNotAuthenticatedException, HiringTransactionNotFoundException {
         Customer customer = authService.getCustomerAuthenticated();
         return toHiringOverviewDTO(transactionRepository
                         .findCustomerTransactionById(transactionId, customer.getId())
@@ -97,6 +97,10 @@ public class HiringTransactionService {
                 .stream()
                 .map(HiringTransactionMapper::toHiringOverviewDTO)
                 .collect(Collectors.toList());
+    }
+
+    public boolean hasHiredChanga(Long changaId, Long customerId) {
+        return transactionRepository.hasByRequesterAndChangaAndStatus(customerId, changaId, TransactionStatus.ACCEPTED_BY_REQUESTER);
     }
 
     private HiringTransaction getHiringTransaction(Long transactionId) throws HiringTransactionNotFoundException {
