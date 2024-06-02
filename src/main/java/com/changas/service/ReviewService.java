@@ -1,5 +1,6 @@
 package com.changas.service;
 
+import com.changas.dto.review.AverageReview;
 import com.changas.dto.review.CreateReviewRequest;
 import com.changas.dto.review.ReviewDTO;
 import com.changas.exceptions.changa.ChangaNotFoundException;
@@ -65,5 +66,12 @@ public class ReviewService {
                 .orElseThrow(() -> new ReviewNotFoundException(changaId));
 
 
+    }
+
+    public AverageReview getAverageReview(Long changaId) throws ChangaNotFoundException {
+        Changa changa = changaService.getChangaById(changaId);
+        Double average  = reviewRepository.getAverageRateForChanga(changa.getId()).orElse(0.0);
+        Integer amount = reviewRepository.getRateAmountForChanga(changa.getId()).orElse(0);
+        return new AverageReview(average, amount);
     }
 }

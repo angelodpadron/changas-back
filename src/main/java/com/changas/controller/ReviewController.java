@@ -1,6 +1,7 @@
 package com.changas.controller;
 
 import com.changas.dto.ApiResponse;
+import com.changas.dto.review.AverageReview;
 import com.changas.dto.review.CreateReviewRequest;
 import com.changas.dto.review.ReviewDTO;
 import com.changas.exceptions.changa.ChangaNotFoundException;
@@ -31,6 +32,12 @@ public class ReviewController {
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<ApiResponse<ReviewDTO>> getCustomerReview(@PathVariable Long customerId, @RequestParam Long changaId) throws ReviewNotFoundException {
         return ResponseEntity.ok(ApiResponse.success(reviewService.getCustomerReviewFor(customerId, changaId)));
+    }
+
+    @Operation(summary = "Get average review for a given changa")
+    @GetMapping("/changa/{changaId}")
+    public ResponseEntity<ApiResponse<AverageReview>> getAverageReview(@PathVariable Long changaId) throws ChangaNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(reviewService.getAverageReview(changaId)));
     }
 
 }
