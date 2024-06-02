@@ -12,7 +12,6 @@ import com.changas.mappers.ReviewMapper;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
 import com.changas.model.Review;
-import com.changas.repository.ChangaRepository;
 import com.changas.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final ChangaRepository changaRepository;
     private final ChangaService changaService;
     private final HiringTransactionService transactionService;
     private final AuthService authService;
@@ -32,19 +30,15 @@ public class ReviewService {
 
     @Transactional
     public ReviewDTO createReview(CreateReviewRequest request) throws ReviewException, CustomerNotAuthenticatedException, ChangaNotFoundException {
-        // TODO: find a better way to save review instead of relying on cascade
-
         Customer reviewer = authService.getCustomerAuthenticated();
+        Changa changa = changaService.getChangaById(request.getChangaId());
 
         checkIfAlreadyReviewed(request.getChangaId(), reviewer.getId());
         checkIfCanReview(request.getChangaId(), reviewer.getId());
 
-        Changa changa = changaService.getChangaById(request.getChangaId());
-
         Review review = Review.generateReview(changa, reviewer, request.getRating(), request.getComment(), request.getPhotoUrl());
-        changa.getReviews().add(review);
 
-        changaRepository.save(changa); // save by cascade
+        reviewRepository.save(review);
 
         return ReviewMapper.toReviewDTO(review);
     }
