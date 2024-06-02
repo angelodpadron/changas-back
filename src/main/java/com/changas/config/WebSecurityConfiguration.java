@@ -50,6 +50,7 @@ public class WebSecurityConfiguration {
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/changas/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/customers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/reviews/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationManager(authenticationManager)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

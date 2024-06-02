@@ -1,6 +1,7 @@
 package com.changas.controller;
 
 import com.changas.dto.ApiResponse;
+import com.changas.dto.review.AverageReview;
 import com.changas.dto.review.CreateReviewRequest;
 import com.changas.dto.review.ReviewDTO;
 import com.changas.exceptions.changa.ChangaNotFoundException;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/reviews")
@@ -32,5 +35,18 @@ public class ReviewController {
     public ResponseEntity<ApiResponse<ReviewDTO>> getCustomerReview(@PathVariable Long customerId, @RequestParam Long changaId) throws ReviewNotFoundException {
         return ResponseEntity.ok(ApiResponse.success(reviewService.getCustomerReviewFor(customerId, changaId)));
     }
+
+    @Operation(summary = "Get average review for a given changa")
+    @GetMapping("/overview/changa/{changaId}")
+    public ResponseEntity<ApiResponse<AverageReview>> getAverageReview(@PathVariable Long changaId) throws ChangaNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(reviewService.getAverageReview(changaId)));
+    }
+
+    @Operation(summary = "Get reviews for a given changa")
+    @GetMapping("/changa/{changaId}")
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewsForChanga(@PathVariable Long changaId) throws ChangaNotFoundException {
+        return ResponseEntity.ok(ApiResponse.success(reviewService.getReviewsForChanga(changaId)));
+    }
+
 
 }
