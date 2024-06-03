@@ -7,14 +7,11 @@ import com.changas.model.QuestionsAndAnswers.Question;
 public class QuestionMapper {
     public static QuestionDTO toQuestionDTO(Question question){
         return QuestionDTO.builder()
+                .id(question.getId())
                 .message(question.getMessage())
                 .date(question.getDate())
-                .customer(CustomerOverviewDTO.builder()
-                        .id(question.getCustomer().getId())
-                        .name(question.getCustomer().getName())
-                        .email(question.getCustomer().getEmail())
-                        .photoUrl(question.getCustomer().getPhotoUrl())
-                        .build())
+                .customer_name(question.getCustomer().getName())
+                .changa_id(question.getChanga().getId())
                 .build();
     }
 }

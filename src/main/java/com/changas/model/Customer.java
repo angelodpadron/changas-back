@@ -23,6 +23,7 @@ public class Customer {
     private String password;
     private String photoUrl;
 
+    @Builder.Default
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private Set<Changa> posts = new HashSet<>();
 
