@@ -7,6 +7,7 @@ import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
 import com.changas.exceptions.customer.CustomerAuthenticationException;
 import com.changas.exceptions.customer.CustomerNotFoundException;
+import com.changas.exceptions.inquiry.InquiryException;
 import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.exceptions.status.IllegalTransactionOperationException;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(asApiErrorResponse(e.getMessage()));
     }
 
-    @ExceptionHandler({CustomerAlreadyRegisteredException.class, BadSearchRequestException.class, IllegalTransactionOperationException.class, UnauthorizedChangaEditException.class})
+    @ExceptionHandler({CustomerAlreadyRegisteredException.class, BadSearchRequestException.class, IllegalTransactionOperationException.class, UnauthorizedChangaEditException.class, InquiryException.class})
     public ResponseEntity<ApiResponse<?>> handleBadRequestException(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(asApiErrorResponse(e.getMessage()));
     }
