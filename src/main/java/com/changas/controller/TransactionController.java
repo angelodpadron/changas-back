@@ -36,7 +36,7 @@ public class TransactionController {
     @Operation(summary = "Retrieve the details of a given transaction")
     @GetMapping("/{transactionId}")
     public ResponseEntity<ApiResponse<HiringOverviewDTO>> getHiringOverview(@PathVariable Long transactionId) throws HiringTransactionNotFoundException, CustomerNotAuthenticatedException {
-        return ResponseEntity.ok(ApiResponse.success(transactionService.getTransactionFromCustomer(transactionId)));
+        return ResponseEntity.ok(ApiResponse.success(transactionService.getHiringOverviewFromCustomer(transactionId)));
     }
 
     @Operation(summary = "Retrieve all the transactions of the customer with a given status")

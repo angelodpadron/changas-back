@@ -49,6 +49,8 @@ public class WebSecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/changas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/customers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/inquiries/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationManager(authenticationManager)

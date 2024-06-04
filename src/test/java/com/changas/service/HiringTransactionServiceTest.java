@@ -36,7 +36,7 @@ class HiringTransactionServiceTest {
     private Customer customer;
     private Customer provider;
     private Changa changa;
-    private final WorkAreaDetailsDTO workAreaDetails = new WorkAreaDetailsDTO("photo_url", "work_area_description");
+    private final WorkAreaDetailsDTO workAreaDetails = new WorkAreaDetailsDTO(null,"photo_url", "work_area_description");
 
     @BeforeEach
     void setUp() {

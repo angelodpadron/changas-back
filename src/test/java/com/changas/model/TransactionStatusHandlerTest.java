@@ -19,17 +19,20 @@ class TransactionStatusHandlerTest {
     HiringTransaction transaction;
     Customer provider;
     Customer requester;
+    Changa changa;
 
     @BeforeEach
     void setup() {
         transaction = mock(HiringTransaction.class);
         provider = mock(Customer.class);
         requester = mock(Customer.class);
+        changa = mock(Changa.class);
 
-        when(transaction.getProvider()).thenReturn(provider);
         when(transaction.getRequester()).thenReturn(requester);
+        when(transaction.getChanga()).thenReturn(changa);
         when(provider.getId()).thenReturn(1L);
         when(requester.getId()).thenReturn(2L);
+        when(changa.getProvider()).thenReturn(provider);
     }
 
     @DisplayName("A transaction handler knows if it can handle a status")
