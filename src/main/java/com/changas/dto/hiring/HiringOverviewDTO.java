@@ -14,8 +14,7 @@ import java.time.Instant;
 @Data
 @Builder
 public class HiringOverviewDTO {
-    @JsonProperty(value = "hiring_id")
-    private Long hiringId;
+    private Long id;
     @JsonProperty(value = "changa_id")
     private Long changaId;
     @JsonProperty(value = "provider_id")

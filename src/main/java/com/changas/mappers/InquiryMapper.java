@@ -12,6 +12,7 @@ public class InquiryMapper {
                 .question(inquiry.getQuestion())
                 .answer(inquiry.getAnswer())
                 .changaId(inquiry.getChanga().getId())
+                .changa(ChangaMapper.toChangaOverviewDTO(inquiry.getChanga()))
                 .customer(CustomerMapper.toCustomerOverviewDTO(inquiry.getCustomer()))
                 .createdAt(inquiry.getCreatedAt())
                 .build();

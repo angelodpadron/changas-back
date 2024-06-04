@@ -1,5 +1,6 @@
 package com.changas.dto.question;
 
+import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.customer.CustomerOverviewDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -15,6 +16,7 @@ public class InquiryDTO {
     private String answer;
     @JsonProperty(value = "changa_id")
     private Long changaId;
+    private ChangaOverviewDTO changa;
     private CustomerOverviewDTO customer;
     @JsonProperty(value = "created_at")
     private Instant createdAt;

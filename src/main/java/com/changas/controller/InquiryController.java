@@ -43,9 +43,15 @@ public class InquiryController {
         return ResponseEntity.ok(ApiResponse.success(inquiryService.getQuestionById(questionId)));
     }
 
-    @Operation(summary = "Returns all the inquiry for a given changa")
+    @Operation(summary = "Returns all the inquiries for a given changa")
     @GetMapping("/changa/{changaId}")
     public ResponseEntity<ApiResponse<List<InquiryDTO>>> getAllQuestions(@PathVariable Long changaId) {
         return ResponseEntity.ok(ApiResponse.success(inquiryService.getAllQuestions(changaId)));
+    }
+
+    @Operation(summary = "Returns all the non answered inquiries")
+    @GetMapping("/pending")
+    public ResponseEntity<ApiResponse<List<InquiryDTO>>> getAllInquiries() throws CustomerNotAuthenticatedException {
+        return ResponseEntity.ok(ApiResponse.success(inquiryService.getPendingInquiries()));
     }
 }

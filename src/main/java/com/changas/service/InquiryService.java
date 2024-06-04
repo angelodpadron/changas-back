@@ -66,4 +66,13 @@ public class InquiryService {
                 .map(InquiryMapper::toInquiryDTO)
                 .collect(Collectors.toList());
     }
+
+    public List<InquiryDTO> getPendingInquiries() throws CustomerNotAuthenticatedException {
+        Customer customer = authService.getCustomerAuthenticated();
+        return inquiryRepository
+                .getPendingInquiriesFor(customer.getId())
+                .stream()
+                .map(InquiryMapper::toInquiryDTO)
+                .collect(Collectors.toList());
+    }
 }
