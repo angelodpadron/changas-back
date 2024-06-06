@@ -51,6 +51,7 @@ public class WebSecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "api/v1/changas/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/customers/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/reviews/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/inquiries/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationManager(authenticationManager)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
