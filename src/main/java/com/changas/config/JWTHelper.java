@@ -1,4 +1,4 @@
-package com.changas.utils;
+package com.changas.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
