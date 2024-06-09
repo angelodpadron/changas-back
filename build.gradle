@@ -60,6 +60,13 @@ jacocoTestReport {
 		html.required = false
 		xml.required = true
 	}
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+			        "**/config/**"
+			])
+		}))
+	}
 }
 
 check.dependsOn jacocoTestReport
