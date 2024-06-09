@@ -1,6 +1,7 @@
 # Changas Backend
 
-[![Coverage Status](https://coveralls.io/repos/github/angelodpadron/changas-back/badge.svg?branch=setup/testing-coverage)](https://coveralls.io/github/angelodpadron/changas-back?branch=setup/testing-coverage)
+![CI Status](https://github.com/angelodpadron/changas-back/actions/workflows/ci.yml/badge.svg)
+![Coverage Status](https://coveralls.io/repos/github/angelodpadron/changas-back/badge.svg)
 
 ## Overview
 Este repo contiene el backend de Changas. 
