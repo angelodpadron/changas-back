@@ -23,7 +23,6 @@ import java.util.Set;
 @RestController
 @RequestMapping("/api/v1/changas")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:8100")
 public class ChangaController {
 
     private final ChangaService changaService;
