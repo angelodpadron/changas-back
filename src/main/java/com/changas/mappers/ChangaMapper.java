@@ -1,5 +1,6 @@
 package com.changas.mappers;
 
+import com.changas.dto.area.ServiceAreaDTO;
 import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.model.Changa;
 
@@ -14,6 +15,7 @@ public class ChangaMapper {
                 .photoUrl(changa.getPhotoUrl())
                 .customerSummary(CustomerMapper.toCustomerOverviewDTO(changa.getProvider()))
                 .available(changa.getAvailable())
+                .serviceAreaDTO(new ServiceAreaDTO(changa.getServiceArea().getName(), changa.getServiceArea().getLocation()))
                 .build();
     }
 

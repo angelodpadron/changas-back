@@ -10,6 +10,7 @@ import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.mappers.ChangaMapper;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
+import com.changas.model.ServiceArea;
 import com.changas.repository.ChangaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -84,7 +85,10 @@ public class ChangaService {
     @Transactional
     public ChangaOverviewDTO createChanga(CreateChangaRequest request) throws CustomerNotAuthenticatedException {
         Customer customer = authService.getCustomerAuthenticated();
-        Changa changa = new Changa(request.title(), request.description(), request.photoUrl(), request.topics(), customer);
+
+        ServiceArea serviceArea = ServiceArea.fromData(request.serviceArea().name(), request.serviceArea().coordinates());
+
+        Changa changa = new Changa(request.title(), request.description(), request.photoUrl(), request.topics(), customer, serviceArea);
 
         customer.saveChangaPost(changa);
         changaRepository.save(changa);

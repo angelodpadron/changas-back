@@ -97,7 +97,7 @@ class ChangaServiceTest {
     }
 
     private CreateChangaRequest createChangaRequest() {
-        return new CreateChangaRequest("Changa Title", "Description", "https://image.org/image.jpg", new HashSet<>());
+        return new CreateChangaRequest("Changa Title", "Description", "https://image.org/image.jpg", new HashSet<>(), null);
     }
 
 }
