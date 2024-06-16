@@ -1,4 +1,4 @@
-package com.changas.config;
+package com.changas.config.utils;
 
 import com.changas.dto.area.ServiceAreaRequest;
 import com.changas.dto.auth.LoginRequest;
