@@ -3,6 +3,9 @@ package com.changas.service;
 import com.changas.dto.area.ServiceAreaRequest;
 import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.changa.CreateChangaRequest;
+import com.changas.dto.changa.UpdateChangaRequest;
+import com.changas.exceptions.changa.ChangaNotFoundException;
+import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
@@ -19,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +37,8 @@ class ChangaServiceTest {
     private ChangaRepository changaRepository;
     @Mock
     AuthService authService;
+    @Mock
+    ServiceAreaService serviceAreaService;
 
     @InjectMocks
     private ChangaService changaService;
@@ -70,7 +76,7 @@ class ChangaServiceTest {
     @Test
     @DisplayName("A created changa gets saved into the customer's posts collection")
     void savingCreatedChangaOnCustomerTest() throws Exception {
-        CreateChangaRequest createChangaRequest = createChangaRequest();
+        CreateChangaRequest createChangaRequest = generateCreateChangaRequest();
 
         when(authService.getCustomerAuthenticated()).thenReturn(testCustomer);
 
@@ -83,7 +89,7 @@ class ChangaServiceTest {
     @Test
     @DisplayName("A successful changa creation returns an overview of it")
     void getChangaOverviewAfterCreationSuccessTest() throws Exception {
-        CreateChangaRequest createChangaRequest = createChangaRequest();
+        CreateChangaRequest createChangaRequest = generateCreateChangaRequest();
         when(authService.getCustomerAuthenticated()).thenReturn(testCustomer);
 
         ChangaOverviewDTO changaOverviewDTO = changaService.createChanga(createChangaRequest);
@@ -94,20 +100,58 @@ class ChangaServiceTest {
     @Test
     @DisplayName("Attempting to create a changa without an authenticated user throws an exception")
     void createChangaWithoutAuthenticatedUser() throws CustomerNotAuthenticatedException {
-        CreateChangaRequest createChangaRequest = createChangaRequest();
+        CreateChangaRequest createChangaRequest = generateCreateChangaRequest();
         when(authService.getCustomerAuthenticated()).thenThrow(CustomerNotAuthenticatedException.class);
 
         assertThrows(CustomerNotAuthenticatedException.class, () -> changaService.createChanga(createChangaRequest));
 
     }
 
-    private Customer createTestCustomer() {
-        return Customer.builder().name("Pepe").email("pepe@email.com").password("password").photoUrl("photoUrl").posts(new HashSet<>()).build();
+    @Test
+    @DisplayName("A provider can update its service information")
+    void updateChangaTest() throws CustomerNotAuthenticatedException, UnauthorizedChangaEditException, ChangaNotFoundException {
+        when(authService.getCustomerAuthenticated()).thenReturn(testCustomer);
+        ServiceArea area = mock(ServiceArea.class);
+
+        Changa changa = mock(Changa.class);
+        when(changa.getId()).thenReturn(1L);
+        when(changa.getServiceArea()).thenReturn(area);
+        when(changa.getProvider()).thenReturn(testCustomer);
+
+        when(changaRepository.findById(any())).thenReturn(Optional.of(changa));
+
+        UpdateChangaRequest request = generateUpdateChangaRequest();
+
+        changaService.updateChanga(changa.getId(), request);
+
+        request.getTitle().ifPresent(title -> verify(changa).setTitle(title));
+        request.getDescription().ifPresent(description -> verify(changa).setDescription(description));
+        request.getPhotoUrl().ifPresent(photoUrl -> verify(changa).setPhotoUrl(photoUrl));
+        request.getTopics().ifPresent(topics -> verify(changa).setTopics(topics));
+        request.getServiceAreaRequest().ifPresent(update -> verify(serviceAreaService).updateServiceArea(area, update));
+
+        verify(changaRepository).save(changa);
+
     }
 
-    private CreateChangaRequest createChangaRequest() {
+    private Customer createTestCustomer() {
+        return Customer.builder().id(1L).name("Pepe").email("pepe@email.com").password("password").photoUrl("photoUrl").posts(new HashSet<>()).build();
+    }
+
+    private CreateChangaRequest generateCreateChangaRequest() {
         ServiceAreaRequest serviceAreaRequest = new ServiceAreaRequest("Address", new double[]{-58.2912458, -34.7955703});
         return new CreateChangaRequest("Changa Title", "Description", "https://image.org/image.jpg", new HashSet<>(), serviceAreaRequest);
+    }
+
+    private UpdateChangaRequest generateUpdateChangaRequest() {
+        UpdateChangaRequest request = new UpdateChangaRequest();
+        request.setTitle("New Title");
+        request.setDescription("New Description");
+        request.setTopics(Set.of());
+        request.setPhotoUrl("New Photo URL");
+        request.setServiceAreaRequest(new ServiceAreaRequest("New Address", new double[]{-58.2912458, -34.7955703}));
+
+        return request;
     }
 
 }
