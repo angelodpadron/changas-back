@@ -16,7 +16,7 @@ class ChangaTest {
     @DisplayName("A changa is available to request when created")
     void changaIsAvailableWhenCreatedTest() {
         Customer provider = mock(Customer.class);
-        Changa changa = new Changa("title", "description", "photo_url", new HashSet<>(), provider);
+        Changa changa = new Changa("title", "description", "photo_url", new HashSet<>(), provider, null);
         assertTrue(changa.getAvailable());
     }
 
@@ -26,7 +26,7 @@ class ChangaTest {
         Customer provider = mock(Customer.class);
         when(provider.getId()).thenReturn(1L);
 
-        Changa changa = new Changa("title", "description", "photo_url", new HashSet<>(), provider);
+        Changa changa = new Changa("title", "description", "photo_url", new HashSet<>(), provider, null);
 
         changa.deactivateAs(provider);
 
@@ -41,7 +41,7 @@ class ChangaTest {
         when(provider.getId()).thenReturn(1L);
         when(randomCustomer.getId()).thenReturn(2L);
 
-        Changa changa = new Changa("title", "description", "photo_url", new HashSet<>(), provider);
+        Changa changa = new Changa("title", "description", "photo_url", new HashSet<>(), provider, null);
 
         assertThrows(UnauthorizedChangaEditException.class, () ->changa.deactivateAs(randomCustomer));
     }

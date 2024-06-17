@@ -1,5 +1,6 @@
 package com.changas.service;
 
+import com.changas.config.utils.JWTHelper;
 import com.changas.dto.auth.LoginRequest;
 import com.changas.dto.auth.SignupRequest;
 import com.changas.exceptions.customer.CustomerAlreadyRegisteredException;
@@ -7,7 +8,6 @@ import com.changas.exceptions.customer.CustomerAuthenticationException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.model.Customer;
 import com.changas.repository.CustomerRepository;
-import com.changas.config.JWTHelper;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

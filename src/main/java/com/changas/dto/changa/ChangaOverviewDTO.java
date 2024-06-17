@@ -1,5 +1,6 @@
 package com.changas.dto.changa;
 
+import com.changas.dto.area.ServiceAreaDTO;
 import com.changas.dto.customer.CustomerOverviewDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -20,5 +21,7 @@ public class ChangaOverviewDTO {
     private Set<String> topics;
     @JsonProperty(value = "provider_summary")
     private CustomerOverviewDTO customerSummary;
+    @JsonProperty(value = "service_area")
+    private ServiceAreaDTO serviceAreaDTO;
     private boolean available;
 }

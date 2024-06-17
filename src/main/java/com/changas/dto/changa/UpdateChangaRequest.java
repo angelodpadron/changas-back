@@ -1,5 +1,6 @@
 package com.changas.dto.changa;
 
+import com.changas.dto.area.ServiceAreaRequest;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Setter;
 
@@ -12,6 +13,8 @@ public class UpdateChangaRequest {
     private String description;
     @JsonProperty(value = "photo_url")
     private String photoUrl;
+    @JsonProperty(value = "service_area")
+    private ServiceAreaRequest serviceAreaRequest;
     private Set<String> topics;
 
     public Optional<String> getTitle() {
@@ -26,6 +29,11 @@ public class UpdateChangaRequest {
 
     public Optional<String> getPhotoUrl() {
         if (photoUrl != null) return Optional.of(photoUrl);
+        return Optional.empty();
+    }
+
+    public Optional<ServiceAreaRequest> getServiceAreaRequest() {
+        if (serviceAreaRequest != null) return Optional.of(serviceAreaRequest);
         return Optional.empty();
     }
 

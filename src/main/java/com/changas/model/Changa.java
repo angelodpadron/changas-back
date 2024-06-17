@@ -4,7 +4,7 @@ import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.*;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,14 +25,17 @@ public class Changa {
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer provider;
     private Boolean available;
+    @OneToOne(cascade = CascadeType.ALL)
+    private ServiceArea serviceArea;
 
-    public Changa(String title, String description, String photoUrl, Set<String> topics, Customer provider) {
+    public Changa(String title, String description, String photoUrl, Set<String> topics, Customer provider, ServiceArea serviceArea) {
         this.title = title;
         this.description = description;
         this.photoUrl = photoUrl;
         this.topics = topics;
         this.provider = provider;
         this.available = true;
+        this.serviceArea = serviceArea;
     }
 
     public void deactivateAs(Customer customer) throws UnauthorizedChangaEditException {

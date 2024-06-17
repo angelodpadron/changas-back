@@ -9,6 +9,7 @@ import com.changas.exceptions.inquiry.SelfQuestionException;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
 import com.changas.model.Inquiry;
+import com.changas.model.ServiceArea;
 import com.changas.repository.InquiryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,8 +45,10 @@ class InquiryServiceTest {
     @Test
     void createInquiryTest() throws ChangaNotFoundException, CustomerNotAuthenticatedException, SelfQuestionException {
         Changa changa = mock(Changa.class);
+        ServiceArea serviceArea = mock(ServiceArea.class);
         Customer customer = mock(Customer.class);
         Customer provider = mock(Customer.class);
+
 
         when(customer.getId()).thenReturn(1L);
         when(provider.getId()).thenReturn(2L);
@@ -54,6 +57,8 @@ class InquiryServiceTest {
 
         when(changa.getProvider()).thenReturn(provider);
         when(changa.getId()).thenReturn(1L);
+        when(changa.getServiceArea()).thenReturn(serviceArea);
+
         when(changaService.getChangaById(any())).thenReturn(changa);
 
         InquiryDTO inquiryDTO = inquiryService.createQuestion(1L, "Question");
@@ -66,11 +71,13 @@ class InquiryServiceTest {
     @Test
     void answerInquiryTest() throws CustomerNotAuthenticatedException, InquiryException {
         Changa changa = mock(Changa.class);
+        ServiceArea serviceArea = mock(ServiceArea.class);
         Customer provider = mock(Customer.class);
         Customer customer = mock(Customer.class);
 
         when(changa.getProvider()).thenReturn(provider);
         when(changa.getId()).thenReturn(1L);
+        when(changa.getServiceArea()).thenReturn(serviceArea);
 
         when(provider.getId()).thenReturn(1L);
         when(customer.getId()).thenReturn(2L);
@@ -90,12 +97,14 @@ class InquiryServiceTest {
     @Test
     void getInquiryByIdTest() throws InquiryException {
         Changa changa = mock(Changa.class);
+        ServiceArea serviceArea = mock(ServiceArea.class);
         Customer provider = mock(Customer.class);
         Customer customer = mock(Customer.class);
         Long inquiryId = 1L;
 
         when(changa.getProvider()).thenReturn(provider);
         when(changa.getId()).thenReturn(1L);
+        when(changa.getServiceArea()).thenReturn(serviceArea);
 
         when(provider.getId()).thenReturn(1L);
         when(customer.getId()).thenReturn(2L);

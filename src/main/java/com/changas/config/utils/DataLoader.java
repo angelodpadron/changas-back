@@ -1,5 +1,6 @@
-package com.changas.config;
+package com.changas.config.utils;
 
+import com.changas.dto.area.ServiceAreaRequest;
 import com.changas.dto.auth.LoginRequest;
 import com.changas.dto.auth.SignupRequest;
 import com.changas.dto.changa.ChangaOverviewDTO;
@@ -40,8 +41,9 @@ public class DataLoader implements CommandLineRunner {
         authService.signup(new SignupRequest("Matias", basePhotoUrl + "Matias", "matias@email.com", "password"));
 
         authService.login(new LoginRequest("pepe@email.com", "password"));
-        ChangaOverviewDTO changa1 = changaService.createChanga(new CreateChangaRequest("Servicio de Plomeria", "Servicio de Plomeria", basePhotoUrl + "Servicio+de+Plomeria", Set.of("Plomeria", "Hogar", "Mantenimiento")));
-        ChangaOverviewDTO changa2 = changaService.createChanga(new CreateChangaRequest("Servicio de Poda", "Servicio de Poda", basePhotoUrl + "Servicio+de+Poda", Set.of("Poda", "Hogar", "Exterior")));
+        ServiceAreaRequest serviceAreaRequest = new ServiceAreaRequest("Direccion", new double[]{-58.2912458, -34.7955703});
+        ChangaOverviewDTO changa1 = changaService.createChanga(new CreateChangaRequest("Servicio de Plomeria", "Servicio de Plomeria", basePhotoUrl + "Servicio+de+Plomeria", Set.of("Plomeria", "Hogar", "Mantenimiento"), serviceAreaRequest));
+        ChangaOverviewDTO changa2 = changaService.createChanga(new CreateChangaRequest("Servicio de Poda", "Servicio de Poda", basePhotoUrl + "Servicio+de+Poda", Set.of("Poda", "Hogar", "Exterior"), serviceAreaRequest));
 
         authService.login(new LoginRequest("sofia@email.com", "password"));
         transactionService.requestChanga(new HireChangaRequest(changa1.getId(), new WorkAreaDetailsDTO(null, basePhotoUrl + "Area+Trabajo", "Descripcion trabajo")));

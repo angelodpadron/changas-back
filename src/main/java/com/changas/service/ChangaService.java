@@ -10,6 +10,7 @@ import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.mappers.ChangaMapper;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
+import com.changas.model.ServiceArea;
 import com.changas.repository.ChangaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class ChangaService {
 
     private final ChangaRepository changaRepository;
     private final AuthService authService;
+    private final ServiceAreaService serviceAreaService;
 
 
     public List<ChangaOverviewDTO> getAllChangaOverviews() {
@@ -52,39 +54,29 @@ public class ChangaService {
     }
 
     public Set<ChangaOverviewDTO> findChangasByTopic(Set<String> topics) {
-        return changaRepository
-                .findChangasByTopics(toLowerCaseSet(topics), topics.size()).stream()
-                .map(ChangaMapper::toChangaOverviewDTO)
-                .collect(Collectors.toSet());
+        return changaRepository.findChangasByTopics(toLowerCaseSet(topics), topics.size()).stream().map(ChangaMapper::toChangaOverviewDTO).collect(Collectors.toSet());
     }
 
     public Set<ChangaOverviewDTO> findChangasByTitle(String title) {
-        return changaRepository
-                .findByTitleContainingIgnoreCase(title)
-                .stream()
-                .map(ChangaMapper::toChangaOverviewDTO)
-                .collect(Collectors.toSet());
+        return changaRepository.findByTitleContainingIgnoreCase(title).stream().map(ChangaMapper::toChangaOverviewDTO).collect(Collectors.toSet());
     }
 
     public Set<ChangaOverviewDTO> findChangasByTitleAndTopics(String title, Set<String> topics) {
         String titleWildCard = "%" + title + "%";
-        return changaRepository
-                .findByTitleAndTopics(titleWildCard, toLowerCaseSet(topics), topics.size())
-                .stream()
-                .map(ChangaMapper::toChangaOverviewDTO)
-                .collect(Collectors.toSet());
+        return changaRepository.findByTitleAndTopics(titleWildCard, toLowerCaseSet(topics), topics.size()).stream().map(ChangaMapper::toChangaOverviewDTO).collect(Collectors.toSet());
     }
 
     public Changa getChangaById(Long changaId) throws ChangaNotFoundException {
-        return changaRepository
-                .findById(changaId)
-                .orElseThrow(() -> new ChangaNotFoundException(changaId));
+        return changaRepository.findById(changaId).orElseThrow(() -> new ChangaNotFoundException(changaId));
     }
 
     @Transactional
     public ChangaOverviewDTO createChanga(CreateChangaRequest request) throws CustomerNotAuthenticatedException {
         Customer customer = authService.getCustomerAuthenticated();
-        Changa changa = new Changa(request.title(), request.description(), request.photoUrl(), request.topics(), customer);
+
+        ServiceArea serviceArea = ServiceArea.fromData(request.serviceArea().name(), request.serviceArea().coordinates());
+
+        Changa changa = new Changa(request.title(), request.description(), request.photoUrl(), request.topics(), customer, serviceArea);
 
         customer.saveChangaPost(changa);
         changaRepository.save(changa);
@@ -104,6 +96,10 @@ public class ChangaService {
         request.getDescription().ifPresent(changa::setDescription);
         request.getPhotoUrl().ifPresent(changa::setPhotoUrl);
         request.getTopics().ifPresent(changa::setTopics);
+
+        if (request.getServiceAreaRequest().isPresent()) {
+            serviceAreaService.updateServiceArea(changa.getServiceArea(), request.getServiceAreaRequest().get());
+        }
 
         changaRepository.save(changa);
 
