@@ -74,7 +74,7 @@ public class ChangaService {
     public ChangaOverviewDTO createChanga(CreateChangaRequest request) throws CustomerNotAuthenticatedException {
         Customer customer = authService.getCustomerAuthenticated();
 
-        ServiceArea serviceArea = ServiceArea.fromData(request.serviceArea().name(), request.serviceArea().coordinates());
+        ServiceArea serviceArea = ServiceArea.fromData(request.serviceArea().name(), request.serviceArea().geometry().coordinates());
 
         Changa changa = new Changa(request.title(), request.description(), request.photoUrl(), request.topics(), customer, serviceArea);
 

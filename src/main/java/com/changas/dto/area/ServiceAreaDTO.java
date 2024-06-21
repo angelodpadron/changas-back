@@ -11,5 +11,5 @@ import org.locationtech.jts.geom.Point;
 @Setter
 public class ServiceAreaDTO {
     private String name;
-    private Point coordinates;
+    private Point geometry;
 }
