@@ -1,5 +1,6 @@
 package com.changas.service;
 
+import com.changas.dto.area.Geometry;
 import com.changas.dto.area.ServiceAreaRequest;
 import com.changas.dto.changa.ChangaOverviewDTO;
 import com.changas.dto.changa.CreateChangaRequest;
@@ -139,7 +140,7 @@ class ChangaServiceTest {
     }
 
     private CreateChangaRequest generateCreateChangaRequest() {
-        ServiceAreaRequest serviceAreaRequest = new ServiceAreaRequest("Address", new double[]{-58.2912458, -34.7955703});
+        ServiceAreaRequest serviceAreaRequest = new ServiceAreaRequest("Address", new Geometry("Point", new Double[]{-58.2912458, -34.7955703}));
         return new CreateChangaRequest("Changa Title", "Description", "https://image.org/image.jpg", new HashSet<>(), serviceAreaRequest);
     }
 
@@ -149,7 +150,7 @@ class ChangaServiceTest {
         request.setDescription("New Description");
         request.setTopics(Set.of());
         request.setPhotoUrl("New Photo URL");
-        request.setServiceAreaRequest(new ServiceAreaRequest("New Address", new double[]{-58.2912458, -34.7955703}));
+        request.setServiceAreaRequest(new ServiceAreaRequest("New Address", new Geometry("Point", new Double[]{-58.2912458, -34.7955703})));
 
         return request;
     }

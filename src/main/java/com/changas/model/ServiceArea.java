@@ -18,12 +18,12 @@ public class ServiceArea {
     @Column(columnDefinition = "Geometry")
     private Point location;
 
-    public static Point createPoint(double[] coordinate) {
+    public static Point createPoint(Double[] coordinate) {
         GeometryFactory geometryFactory = new GeometryFactory();
         return geometryFactory.createPoint(new Coordinate(coordinate[0], coordinate[1]));
     }
 
-    public static ServiceArea fromData(String name, double[] coordinates) {
+    public static ServiceArea fromData(String name, Double[] coordinates) {
         ServiceArea serviceArea = new ServiceArea();
         serviceArea.setName(name);
         serviceArea.setLocation(createPoint(coordinates));

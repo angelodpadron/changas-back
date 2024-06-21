@@ -13,7 +13,7 @@ class ServiceAreaTest {
     void serviceAreaCanGeneratePointFromCoordinatesTest() {
         double x = -58.2912458;
         double y = -34.7955703;
-        double[] coordinates = new double[]{x, y};
+        Double[] coordinates = new Double[]{x, y};
         Point point = ServiceArea.createPoint(coordinates);
         assertEquals(x, point.getX());
         assertEquals(y, point.getY());
@@ -24,7 +24,7 @@ class ServiceAreaTest {
     void generateServiceAreaTest() {
         double x = -58.2912458;
         double y = -34.7955703;
-        double[] coordinates = new double[]{x, y};
+        Double[] coordinates = new Double[]{x, y};
         ServiceArea generated = ServiceArea.fromData("Address", coordinates);
 
         assertEquals("Address", generated.getName());
