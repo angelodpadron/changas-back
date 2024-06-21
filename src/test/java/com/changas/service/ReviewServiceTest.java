@@ -1,5 +1,6 @@
 package com.changas.service;
 
+import com.changas.dto.review.AverageReview;
 import com.changas.dto.review.CreateReviewRequest;
 import com.changas.dto.review.ReviewDTO;
 import com.changas.exceptions.changa.ChangaNotFoundException;
@@ -22,6 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -144,4 +147,34 @@ class ReviewServiceTest {
         return Review.generateReview(changa, reviewer, 5, "Comment", "Photo URL");
     }
 
+    @DisplayName("Get average reviews for a changa")
+    @Test
+    void getAverageReviewForAChangaTest() throws ChangaNotFoundException {
+        when(changaService.getChangaById(changa.getId())).thenReturn(changa);
+        when(reviewRepository.getAverageRateForChanga(changa.getId())).thenReturn(Optional.of(4.0));
+        when(reviewRepository.getRateAmountForChanga(changa.getId())).thenReturn(Optional.of(2));
+
+        AverageReview averageReview = reviewService.getAverageReview(1L);
+
+        assertEquals(averageReview.average(),4.0);
+        assertEquals(averageReview.amount(),2);
+
+    }
+
+    @DisplayName("Get all reviews for a changa")
+    @Test
+    void getAllReviewsForAChangaTest() throws ChangaNotFoundException {
+        Review review5 = generateReview();
+        Review review3 = Review.generateReview(changa, reviewer, 3, "Comment", "Photo URL");
+        List<Review> reviews = new ArrayList<>();
+        reviews.add(review3);
+        reviews.add(review5);
+
+        when(changaService.getChangaById(changa.getId())).thenReturn(changa);
+        when(reviewRepository.getReviewsByChanga(changa.getId())).thenReturn(reviews);
+
+        List<ReviewDTO> ret = reviewService.getReviewsForChanga(1L);
+
+        assertEquals(ret.size(),reviews.size());
+    }
 }
