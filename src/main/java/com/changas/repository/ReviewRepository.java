@@ -23,4 +23,10 @@ public interface ReviewRepository extends CrudRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r WHERE r.changa.id = :changaId")
     List<Review> getReviewsByChanga(@Param("changaId") Long changaId);
+
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.changa.provider.id = :customerId")
+    Optional<Double> getAverageRateForCustomer(@Param("customerId") Long customerId);
+
+    @Query("SELECT COUNT(r.rating) FROM Review r WHERE r.changa.provider.id = :customerId")
+    Optional<Integer> getRateAmountForCustomer(@Param("customerId") Long customerId);
 }

@@ -38,7 +38,7 @@ public class ReviewController {
 
     @Operation(summary = "Get average review for a given changa")
     @GetMapping("/overview/changa/{changaId}")
-    public ResponseEntity<ApiResponse<AverageReview>> getAverageReview(@PathVariable Long changaId) throws ChangaNotFoundException {
+    public ResponseEntity<ApiResponse<AverageReview>> getChangaAverageReview(@PathVariable Long changaId) throws ChangaNotFoundException {
         return ResponseEntity.ok(ApiResponse.success(reviewService.getAverageReview(changaId)));
     }
 
@@ -46,6 +46,12 @@ public class ReviewController {
     @GetMapping("/changa/{changaId}")
     public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewsForChanga(@PathVariable Long changaId) throws ChangaNotFoundException {
         return ResponseEntity.ok(ApiResponse.success(reviewService.getReviewsForChanga(changaId)));
+    }
+
+    @Operation(summary = "Get review overview of a customer")
+    @GetMapping("/overview/customer/{customerId}")
+    public ResponseEntity<ApiResponse<AverageReview>> getCustomerAverageReview(@PathVariable Long customerId) {
+        return ResponseEntity.ok(ApiResponse.success(reviewService.getCustomerAverageReview(customerId)));
     }
 
 
