@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -176,5 +177,17 @@ class ReviewServiceTest {
         List<ReviewDTO> ret = reviewService.getReviewsForChanga(1L);
 
         assertEquals(ret.size(),reviews.size());
+    }
+
+    @DisplayName("Get customer average review")
+    @Test
+    void getCustomerAverageReviewTest() {
+        when(reviewRepository.getAverageRateForCustomer(any())).thenReturn(Optional.of(3.5));
+        when(reviewRepository.getRateAmountForCustomer(any())).thenReturn(Optional.of(5));
+
+        AverageReview averageReview = reviewService.getCustomerAverageReview(1L);
+
+        assertEquals(3.5, averageReview.average());
+        assertEquals(5, averageReview.amount());
     }
 }

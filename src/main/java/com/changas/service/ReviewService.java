@@ -85,4 +85,11 @@ public class ReviewService {
                 .map(ReviewMapper::toReviewDTO)
                 .collect(Collectors.toList());
     }
+
+    public AverageReview getCustomerAverageReview(Long customerId) {
+        Double average = reviewRepository.getAverageRateForCustomer(customerId).orElse(0.0);
+        Integer amount = reviewRepository.getRateAmountForCustomer(customerId).orElse(0);
+        return new AverageReview(average, amount);
+
+    }
 }
