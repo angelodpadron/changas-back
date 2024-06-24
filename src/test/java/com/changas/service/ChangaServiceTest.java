@@ -155,4 +155,21 @@ class ChangaServiceTest {
         return request;
     }
 
+    @Test
+    @DisplayName("Find changa with title")
+    void findChangaWithTitleTest(){
+        Changa changa1 = mock(Changa.class);
+
+        when(changa1.getProvider()).thenReturn(testCustomer);
+
+        when(changa1.getTitle()).thenReturn("Cut grass and pruned trees");
+
+        when(changaRepository.findByTitleContainingIgnoreCase(any())).thenReturn(new HashSet<>(List.of(changa1)));
+
+        Set<ChangaOverviewDTO> changa = changaService.findChangasByTitle("cut grass");
+
+        assertEquals(1,changa.size());
+
+    }
+
 }
