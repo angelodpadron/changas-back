@@ -16,6 +16,8 @@ public class ChangaMapper {
                 .customerSummary(CustomerMapper.toCustomerOverviewDTO(changa.getProvider()))
                 .available(changa.getAvailable())
                 .serviceAreaDTO(new ServiceAreaDTO(changa.getServiceArea().getName(), changa.getServiceArea().getLocation()))
+                .createdAt(changa.getCreatedAt())
+                .lastUpdate(changa.getLastUpdate())
                 .build();
     }
 

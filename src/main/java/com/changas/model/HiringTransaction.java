@@ -4,6 +4,8 @@ import com.changas.exceptions.HiringOwnChangaException;
 import com.changas.model.status.TransactionStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -38,7 +40,11 @@ public class HiringTransaction {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "provider_proposal_id")
     private ProviderProposal providerProposal;
-    private Instant creationDate;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Instant createdAt;
+    @UpdateTimestamp
+    private Instant lastUpdate;
 
     public static HiringTransaction generateTransactionFor(Changa changa, Customer requester, WorkAreaDetails workAreaDetails) throws HiringOwnChangaException {
         checkIfCanHire(requester, changa);
@@ -48,7 +54,6 @@ public class HiringTransaction {
                 .requester(requester)
                 .workAreaDetails(workAreaDetails)
                 .status(TransactionStatus.AWAITING_PROVIDER_CONFIRMATION)
-                .creationDate(Instant.now())
                 .build();
     }
 

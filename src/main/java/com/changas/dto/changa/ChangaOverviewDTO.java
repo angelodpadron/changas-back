@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.Instant;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -24,4 +25,8 @@ public class ChangaOverviewDTO {
     @JsonProperty(value = "service_area")
     private ServiceAreaDTO serviceAreaDTO;
     private boolean available;
+    @JsonProperty(value = "created_at")
+    private Instant createdAt;
+    @JsonProperty(value = "last_update")
+    private Instant lastUpdate;
 }

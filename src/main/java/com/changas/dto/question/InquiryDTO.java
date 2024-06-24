@@ -20,4 +20,6 @@ public class InquiryDTO {
     private CustomerOverviewDTO customer;
     @JsonProperty(value = "created_at")
     private Instant createdAt;
+    @JsonProperty(value = "last_update")
+    private Instant lastUpdate;
 }
