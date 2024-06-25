@@ -166,11 +166,13 @@ class HiringTransactionServiceTest {
     @Test
     @DisplayName("Find transaction from customer id")
     public void findTransactionFromCustomerIdTest() throws HiringOwnChangaException, HiringTransactionNotFoundException, CustomerNotAuthenticatedException {
-        HiringTransaction transaction = HiringTransaction.generateTransactionFor(changa,customer,workAreaDetails);
-        //when(transaction.getId()).thenReturn(1L);
         when(authService.getCustomerAuthenticated()).thenReturn(customer);
         when(customer.getId()).thenReturn(1L);
+        when(provider.getId()).thenReturn(2L);
+        when(changa.getId()).thenReturn(1L);
         when(changa.getProvider()).thenReturn(provider);
+
+        HiringTransaction transaction = HiringTransaction.generateTransactionFor(changa,customer,workAreaDetails);
         when( hiringTransactionRepository.findCustomerTransactionById(transaction.getId(),customer.getId())).thenReturn(Optional.of(transaction));
 
         HiringOverviewDTO hiringOverviewDTO = hiringTransactionService.getHiringOverviewFromCustomer(transaction.getId());
