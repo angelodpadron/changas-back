@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -30,7 +32,11 @@ public class Inquiry {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
+    @CreationTimestamp
+    @Column(updatable = false)
     private Instant createdAt;
+    @UpdateTimestamp
+    private Instant lastUpdate;
 
 
     public static Inquiry generateFor(String question, Customer customer, Changa changa) throws SelfQuestionException {
@@ -40,7 +46,6 @@ public class Inquiry {
                 .question(question)
                 .customer(customer)
                 .changa(changa)
-                .createdAt(Instant.now())
                 .build();
     }
 

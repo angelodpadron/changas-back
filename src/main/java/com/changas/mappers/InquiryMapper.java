@@ -15,6 +15,7 @@ public class InquiryMapper {
                 .changa(ChangaMapper.toChangaOverviewDTO(inquiry.getChanga()))
                 .customer(CustomerMapper.toCustomerOverviewDTO(inquiry.getCustomer()))
                 .createdAt(inquiry.getCreatedAt())
+                .lastUpdate(inquiry.getLastUpdate())
                 .build();
     }
 }

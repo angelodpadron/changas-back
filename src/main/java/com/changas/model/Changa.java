@@ -3,7 +3,10 @@ package com.changas.model;
 import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -27,6 +30,11 @@ public class Changa {
     private Boolean available;
     @OneToOne(cascade = CascadeType.ALL)
     private ServiceArea serviceArea;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Instant createdAt;
+    @UpdateTimestamp
+    private Instant lastUpdate;
 
     public Changa(String title, String description, String photoUrl, Set<String> topics, Customer provider, ServiceArea serviceArea) {
         this.title = title;

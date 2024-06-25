@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
@@ -24,6 +25,8 @@ public class Review {
     private int rating;
     private String comment;
     private String photoUrl;
+    @CreationTimestamp
+    @Column(updatable = false)
     private Instant createdAt;
 
     public static Review generateReview(Changa changa, Customer reviewer, int rating, String comment, String photoUrl) {
@@ -34,7 +37,6 @@ public class Review {
                 .rating(rating)
                 .comment(comment)
                 .photoUrl(photoUrl)
-                .createdAt(Instant.now())
                 .build();
     }
 

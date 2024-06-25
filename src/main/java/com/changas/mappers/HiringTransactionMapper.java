@@ -17,13 +17,14 @@ public class HiringTransactionMapper {
                 .providerId(transaction.getChanga().getProvider().getId())
                 .customerId(transaction.getRequester().getId())
                 .changaId(transaction.getChanga().getId())
-                .creationDate(transaction.getCreationDate())
+                .createdAt(transaction.getCreatedAt())
                 .status(transaction.getStatus())
                 .changaTitle(transaction.getChanga().getTitle())
                 .changaDescription(transaction.getChanga().getDescription())
                 .changaPhotoUrl(transaction.getChanga().getPhotoUrl())
                 .workAreaDetailsDTO(asWorkAreaDetailsDTO(transaction.getWorkAreaDetails()))
                 .providerProposalDTO(asProviderProposalDTO(transaction.getProviderProposal()))
+                .lastUpdate(transaction.getLastUpdate())
                 .build();
     }
 
