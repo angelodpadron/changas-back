@@ -3,12 +3,12 @@ package com.changas.dto.hiring.response;
 import com.changas.dto.hiring.ProviderProposalDTO;
 import com.changas.model.status.TransactionResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Optional;
-
-@Setter
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
 public class HiringResponse {
     @Getter
     @JsonProperty(value = "transaction_id")
