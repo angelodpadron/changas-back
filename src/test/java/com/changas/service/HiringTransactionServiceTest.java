@@ -121,7 +121,7 @@ class HiringTransactionServiceTest {
 
     @DisplayName("Provider respond accept a changa request")
     @Test
-    void respondAChangaRequestTest() throws CustomerNotAuthenticatedException, HiringOwnChangaException, TransactionStatusHandlerException, IllegalTransactionOperationException {
+    void respondAChangaRequestTest() throws CustomerNotAuthenticatedException, HiringOwnChangaException, TransactionStatusHandlerException, IllegalTransactionOperationException, HiringTransactionNotFoundException {
         TransactionResponse transactionResponse = TransactionResponse.ACCEPT; //provider acepta la solicitud
         when(customer.getId()).thenReturn(1L); //id cliente
         when(provider.getId()).thenReturn(2L);  //id proveedor de la changa
@@ -131,7 +131,7 @@ class HiringTransactionServiceTest {
         HiringTransaction transaction = HiringTransaction.generateTransactionFor(changa,customer,workAreaDetails);
         HiringResponse hiringResponse = new HiringResponse(transaction.getId(),transactionResponse,providerProposalDTO); //se crea la respuesta para el cliente
 
-        when(authService.getCustomerAuthenticated()).thenReturn(provider);
+        when(authService.getCustomerAuthenticated()).thenReturn(customer);
         when(hiringTransactionRepository.findById(hiringResponse.getTransactionId())).thenReturn(Optional.ofNullable(transaction));
 
         TransactionOperation operation = new TransactionOperation(hiringResponse.getResponse(),providerProposal);
@@ -141,8 +141,10 @@ class HiringTransactionServiceTest {
 
         assertEquals(TransactionStatus.AWAITING_PROVIDER_CONFIRMATION, transaction.getStatus());
         handler.handleTransaction(transaction,operation,provider);
+        HiringOverviewDTO hiringOverviewDTO = hiringTransactionService.respondChangaRequest(hiringResponse);
 
-        assertEquals(TransactionStatus.AWAITING_REQUESTER_CONFIRMATION, transaction.getStatus());
+        assertEquals(TransactionStatus.ACCEPTED_BY_REQUESTER, transaction.getStatus());
+        assertEquals(TransactionStatus.ACCEPTED_BY_REQUESTER, hiringOverviewDTO.getStatus());
     }
 
     @Test
@@ -178,5 +180,39 @@ class HiringTransactionServiceTest {
         HiringOverviewDTO hiringOverviewDTO = hiringTransactionService.getHiringOverviewFromCustomer(transaction.getId());
 
         assertNotNull(hiringOverviewDTO);
+    }
+
+    @Test
+    @DisplayName("Get Transactions from customer with Status Decline")
+    public void getAllTransactionsFromCustomerWithStatusDeclineTest() throws HiringOwnChangaException, CustomerNotAuthenticatedException, TransactionStatusHandlerException, IllegalTransactionOperationException {
+        when(customer.getId()).thenReturn(1L); //id cliente
+        when(provider.getId()).thenReturn(2L);  //id proveedor de la changa
+        when(changa.getId()).thenReturn(1L);
+        when(changa.getProvider()).thenReturn(provider);
+        when(authService.getCustomerAuthenticated()).thenReturn(customer);
+
+        HiringTransaction transaction = HiringTransaction.generateTransactionFor(changa,customer,workAreaDetails);
+        TransactionResponse transactionResponse = TransactionResponse.DECLINE;
+
+        HiringResponse hiringResponse = new HiringResponse(transaction.getId(),transactionResponse,providerProposalDTO);
+
+        when(hiringTransactionRepository.findById(hiringResponse.getTransactionId())).thenReturn(Optional.ofNullable(transaction));
+
+        TransactionOperation operation = new TransactionOperation(hiringResponse.getResponse(),providerProposal);
+
+        TransactionStatusHandler handler =
+                AwaitingProviderConfirmationHandler.getHandlerFor(transaction.getStatus());
+
+        assertEquals(TransactionStatus.AWAITING_PROVIDER_CONFIRMATION, transaction.getStatus());
+        handler.handleTransaction(transaction,operation,provider);
+
+        Set<HiringTransaction> ts = new HashSet<>();
+        ts.add(transaction);
+        when(hiringTransactionRepository.findByCustomerIdAndStatus(customer.getId(),transaction.getStatus())).thenReturn(ts);
+        List<HiringOverviewDTO> transactions = hiringTransactionService.getTransactionsFromCustomerWithStatus(TransactionStatus.DECLINED_BY_PROVIDER);
+
+        assertEquals(TransactionStatus.DECLINED_BY_PROVIDER, transaction.getStatus());
+        assertEquals(transactions.size(),1);
+
     }
 }
