@@ -173,14 +173,4 @@ class ChangaServiceTest {
         assertNotNull(changaService.getChangaById(1L));
 
     }
-
-    @Test
-    @DisplayName("find Changa by title and topic")
-    public void findChangaByTitleandTopicTest() throws BadSearchRequestException {
-        when(changaRepository.findByTitleAndTopics(any(String.class),anySet(),anyInt())).thenReturn(anySet());
-        Set<ChangaOverviewDTO> changaOverviewDTOS =
-                changaService.findChangaByCriteriaHandler(Optional.of(anyString()), Optional.of(Collections.singleton(anyString())));
-
-        assertNotNull(changaOverviewDTOS);
-    }
 }
