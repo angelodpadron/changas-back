@@ -9,6 +9,7 @@ import com.changas.exceptions.customer.CustomerAuthenticationException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
+import com.changas.repository.ChangaRepository;
 import com.changas.repository.CustomerRepository;
 import com.changas.service.AuthService;
 import com.changas.service.ChangaService;
@@ -18,11 +19,13 @@ import org.springframework.stereotype.Component;
 public class DataLoader {
 
     private final CustomerRepository customerRepository;
+    private final ChangaRepository changaRepository;
     private final ChangaService changaService;
     private final AuthService authService;
 
-    public DataLoader(CustomerRepository customerRepository, ChangaService changaService, AuthService authService) {
+    public DataLoader(CustomerRepository customerRepository, ChangaRepository changaRepository, ChangaService changaService, AuthService authService) {
         this.customerRepository = customerRepository;
+        this.changaRepository = changaRepository;
         this.changaService = changaService;
         this.authService = authService;
     }
@@ -42,5 +45,9 @@ public class DataLoader {
 
     public void deleteAllCustomers() {
         customerRepository.deleteAll();
+    }
+
+    public void deleteAllChangas() {
+        changaRepository.deleteAll();
     }
 }
