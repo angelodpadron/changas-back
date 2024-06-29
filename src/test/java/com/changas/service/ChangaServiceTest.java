@@ -8,6 +8,7 @@ import com.changas.dto.changa.UpdateChangaRequest;
 import com.changas.exceptions.changa.ChangaNotFoundException;
 import com.changas.exceptions.changa.UnauthorizedChangaEditException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
+import com.changas.exceptions.search.BadSearchRequestException;
 import com.changas.model.Changa;
 import com.changas.model.Customer;
 import com.changas.model.ServiceArea;
@@ -21,10 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -155,4 +153,24 @@ class ChangaServiceTest {
         return request;
     }
 
+    @Test
+    @DisplayName("Get all changas")
+    public void getAllChangasTest(){
+        when(changaRepository.findAll()).thenReturn(List.of());
+
+        List<ChangaOverviewDTO> changasDto = changaService.getAllChangaOverviews();
+
+        assertNotNull(changasDto);
+
+    }
+
+    @Test
+    @DisplayName("Get changa by id")
+    public void getChangaByIdTest() throws ChangaNotFoundException {
+        Changa changa = mock(Changa.class);
+        when(changaRepository.findById(any())).thenReturn(Optional.ofNullable(changa));
+
+        assertNotNull(changaService.getChangaById(1L));
+
+    }
 }
