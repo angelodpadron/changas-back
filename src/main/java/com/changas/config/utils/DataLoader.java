@@ -36,21 +36,34 @@ public class DataLoader implements CommandLineRunner {
 
         log.info("Adding filler data into DB");
 
-        String basePhotoUrl = "https://placehold.co/600x400?text=";
-        authService.signup(new SignupRequest("Pepe", basePhotoUrl + "Pepe", "pepe@email.com", "password"));
-        authService.signup(new SignupRequest("Sofia", basePhotoUrl + "Sofia", "sofia@email.com", "password"));
-        authService.signup(new SignupRequest("Matias", basePhotoUrl + "Matias", "matias@email.com", "password"));
+        String randomPhotoUrl = "https://i.pravatar.cc/300";
+
+        String plomeroUrl = "https://images.pexels.com/photos/9389356/pexels-photo-9389356.jpeg";
+        String herreriaUrl = "https://images.pexels.com/photos/3158651/pexels-photo-3158651.jpeg";
+        String electricistaUrl = "https://images.pexels.com/photos/7859953/pexels-photo-7859953.jpeg";
+
+        String electricistaDescripcion = "Ofrecemos servicios profesionales, seguros y garantizados para instalaciones, reparaciones y mantenimiento. Atención personalizada y soluciones eficientes. Contáctanos hoy mismo para una cotización gratuita.";
+        String plomeroDescripcion = "Desde reparaciones simples hasta instalaciones complejas. Contáctanos ahora y deja que nuestros expertos cuiden de tu hogar o negocio con profesionalismo y calidad garantizada.";
+        String herreroDescripcion = "Somos expertos herreros matriculados. Desde puertas y ventanas hasta estructuras metálicas complejas, nuestro compromiso es la calidad y la precisión en cada detalle.";
+
+
+        authService.signup(new SignupRequest("Pepe", randomPhotoUrl, "pepe@email.com", "password"));
+        authService.signup(new SignupRequest("Sofia", randomPhotoUrl, "sofia@email.com", "password"));
+        authService.signup(new SignupRequest("Matias", randomPhotoUrl, "matias@email.com", "password"));
 
         authService.login(new LoginRequest("pepe@email.com", "password"));
-        ServiceAreaRequest serviceAreaRequest = new ServiceAreaRequest("Direccion", new Geometry("Point", new Double[]{-58.2912458, -34.7955703}));
-        ChangaOverviewDTO changa1 = changaService.createChanga(new CreateChangaRequest("Servicio de Plomeria", "Servicio de Plomeria", basePhotoUrl + "Servicio+de+Plomeria", Set.of("Plomeria", "Hogar", "Mantenimiento"), serviceAreaRequest));
-        ChangaOverviewDTO changa2 = changaService.createChanga(new CreateChangaRequest("Servicio de Poda", "Servicio de Poda", basePhotoUrl + "Servicio+de+Poda", Set.of("Poda", "Hogar", "Exterior"), serviceAreaRequest));
-
-        authService.login(new LoginRequest("sofia@email.com", "password"));
-        transactionService.requestChanga(new HireChangaRequest(changa1.getId(), new WorkAreaDetailsDTO(null, basePhotoUrl + "Area+Trabajo", "Descripcion trabajo")));
+        ServiceAreaRequest serviceAreaRequest = new ServiceAreaRequest("Florencio Varela, Buenos Aires", new Geometry("Point", new Double[]{-58.2912458, -34.7955703}));
+        ChangaOverviewDTO changa1 = changaService.createChanga(new CreateChangaRequest("Servicio de Plomeria", plomeroDescripcion, plomeroUrl, Set.of("Plomeria", "Hogar", "Mantenimiento"), serviceAreaRequest));
+        ChangaOverviewDTO changa2 = changaService.createChanga(new CreateChangaRequest("Electricista Matriculado", electricistaDescripcion, electricistaUrl, Set.of("Electricista", "Hogar", "Luz"), serviceAreaRequest));
 
         authService.login(new LoginRequest("matias@email.com", "password"));
-        inquiryService.createQuestion(changa2.getId(), "Buenas, hacen extracciones de raiz?");
+        changaService.createChanga(new CreateChangaRequest("Servicio de Herreria", herreroDescripcion, herreriaUrl, Set.of("Soladura", "Hogar", "Exterior"), serviceAreaRequest));
+
+        authService.login(new LoginRequest("sofia@email.com", "password"));
+        transactionService.requestChanga(new HireChangaRequest(changa1.getId(), new WorkAreaDetailsDTO(null, plomeroUrl, "Necesito tal y tal cosa. Soy de Florencio Varela.")));
+
+        authService.login(new LoginRequest("matias@email.com", "password"));
+        inquiryService.createQuestion(changa2.getId(), "Buenas, hacen instalacion de trifasica?");
 
     }
 }
