@@ -150,5 +150,13 @@ class InquiryServiceTest {
         assertNotNull(inquiries);
     }
 
+    @DisplayName("Can get unread answers")
+    @Test
+    void getUnreadAnswersTest() throws CustomerNotAuthenticatedException {
+        Customer customer = mock(Customer.class);
+        when(authService.getCustomerAuthenticated()).thenReturn(customer);
+        when(inquiryRepository.getPendingInquiriesFor(customer.getId())).thenReturn(List.of());
+        assertNotNull(inquiryService.getUnreadAnswers());
+    }
 
 }
