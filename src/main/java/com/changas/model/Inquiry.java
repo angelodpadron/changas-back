@@ -26,6 +26,7 @@ public class Inquiry {
     private Long id;
     private String question;
     private String answer;
+    private Boolean read;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "changa_id", nullable = false)
     private Changa changa;
@@ -46,6 +47,7 @@ public class Inquiry {
                 .question(question)
                 .customer(customer)
                 .changa(changa)
+                .read(false)
                 .build();
     }
 
@@ -58,6 +60,18 @@ public class Inquiry {
     public void answer(Customer customer, String answer) throws InquiryException {
         checkIfCanRespond(customer);
         setAnswer(answer);
+    }
+
+    public void markAsRead(Customer customer) throws InquiryException {
+        checkIfCanMark(customer);
+        read = true;
+    }
+
+    private void checkIfCanMark(Customer customer) throws InquiryException {
+        boolean isCustomer = customer.getId().equals(this.customer.getId());
+        boolean isAnswered = answer != null;
+
+        if (!isCustomer && !isAnswered) throw new InquiryException("conditions for marking are not met");
     }
 
     private void checkIfCanRespond(Customer customer) throws InquiryException {

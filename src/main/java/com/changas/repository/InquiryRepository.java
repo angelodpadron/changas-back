@@ -12,4 +12,7 @@ public interface InquiryRepository extends CrudRepository<Inquiry, Long> {
 
     @Query("SELECT i FROM Inquiry i WHERE i.changa.provider.id = :customerId AND i.answer IS NULL")
     List<Inquiry> getPendingInquiriesFor(@Param("customerId") Long customerId);
+
+    @Query("SELECT i FROM Inquiry i WHERE i.customer.id = :customerId AND i.answer IS NOT NULL AND i.read = FALSE")
+    List<Inquiry> getUnreadAnswersFor(@Param("customerId") Long customerId);
 }

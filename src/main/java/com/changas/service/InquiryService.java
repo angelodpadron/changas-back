@@ -75,4 +75,25 @@ public class InquiryService {
                 .map(InquiryMapper::toInquiryDTO)
                 .collect(Collectors.toList());
     }
+
+    public List<InquiryDTO> getUnreadAnswers() throws CustomerNotAuthenticatedException {
+        Customer customer = authService.getCustomerAuthenticated();
+        return inquiryRepository
+                .getUnreadAnswersFor(customer.getId())
+                .stream()
+                .map(InquiryMapper::toInquiryDTO)
+                .collect(Collectors.toList());
+    }
+
+    public InquiryDTO markAnswerAsRead(Long inquiryId) throws CustomerNotAuthenticatedException, InquiryException {
+        Customer customer = authService.getCustomerAuthenticated();
+        Inquiry inquiry = inquiryRepository.findById(inquiryId).orElseThrow(() -> new QuestionNotFoundException(inquiryId));
+
+        inquiry.markAsRead(customer);
+
+        inquiryRepository.save(inquiry);
+
+        return InquiryMapper.toInquiryDTO(inquiry);
+
+    }
 }
