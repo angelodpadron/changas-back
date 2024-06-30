@@ -7,6 +7,8 @@ import com.changas.dto.question.InquiryDTO;
 import com.changas.exceptions.changa.ChangaNotFoundException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.inquiry.InquiryException;
+import com.changas.exceptions.inquiry.MarkAsReadException;
+import com.changas.exceptions.inquiry.QuestionNotFoundException;
 import com.changas.exceptions.inquiry.SelfQuestionException;
 import com.changas.service.InquiryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +65,7 @@ public class InquiryController {
 
     @Operation(summary = "Mark unread answered inquiry as read")
     @PostMapping("/mark/{inquiryId}")
-    public ResponseEntity<ApiResponse<InquiryDTO>> markAnswerAsRead(@PathVariable Long inquiryId) throws InquiryException, CustomerNotAuthenticatedException {
+    public ResponseEntity<ApiResponse<InquiryDTO>> markAnswerAsRead(@PathVariable Long inquiryId) throws CustomerNotAuthenticatedException, QuestionNotFoundException, MarkAsReadException {
         return ResponseEntity.ok(ApiResponse.success(inquiryService.markAnswerAsRead(inquiryId)));
     }
 }

@@ -1,9 +1,6 @@
 package com.changas.model;
 
-import com.changas.exceptions.inquiry.InquiryException;
-import com.changas.exceptions.inquiry.QuestionAlreadyAnsweredException;
-import com.changas.exceptions.inquiry.SelfQuestionException;
-import com.changas.exceptions.inquiry.UnauthorizedAnswerException;
+import com.changas.exceptions.inquiry.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,16 +59,16 @@ public class Inquiry {
         setAnswer(answer);
     }
 
-    public void markAsRead(Customer customer) throws InquiryException {
+    public void markAsRead(Customer customer) throws MarkAsReadException {
         checkIfCanMark(customer);
         read = true;
     }
 
-    private void checkIfCanMark(Customer customer) throws InquiryException {
+    private void checkIfCanMark(Customer customer) throws MarkAsReadException {
         boolean isCustomer = customer.getId().equals(this.customer.getId());
         boolean isAnswered = answer != null;
 
-        if (!isCustomer && !isAnswered) throw new InquiryException("conditions for marking are not met");
+        if (!(isCustomer && isAnswered)) throw new MarkAsReadException();
     }
 
     private void checkIfCanRespond(Customer customer) throws InquiryException {
