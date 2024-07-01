@@ -4,6 +4,7 @@ import com.changas.dto.question.InquiryDTO;
 import com.changas.exceptions.changa.ChangaNotFoundException;
 import com.changas.exceptions.customer.CustomerNotAuthenticatedException;
 import com.changas.exceptions.inquiry.InquiryException;
+import com.changas.exceptions.inquiry.MarkAsReadException;
 import com.changas.exceptions.inquiry.QuestionNotFoundException;
 import com.changas.exceptions.inquiry.SelfQuestionException;
 import com.changas.mappers.InquiryMapper;
@@ -74,5 +75,26 @@ public class InquiryService {
                 .stream()
                 .map(InquiryMapper::toInquiryDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<InquiryDTO> getUnreadAnswers() throws CustomerNotAuthenticatedException {
+        Customer customer = authService.getCustomerAuthenticated();
+        return inquiryRepository
+                .getUnreadAnswersFor(customer.getId())
+                .stream()
+                .map(InquiryMapper::toInquiryDTO)
+                .collect(Collectors.toList());
+    }
+
+    public InquiryDTO markAnswerAsRead(Long inquiryId) throws CustomerNotAuthenticatedException, QuestionNotFoundException, MarkAsReadException {
+        Customer customer = authService.getCustomerAuthenticated();
+        Inquiry inquiry = inquiryRepository.findById(inquiryId).orElseThrow(() -> new QuestionNotFoundException(inquiryId));
+
+        inquiry.markAsRead(customer);
+
+        inquiryRepository.save(inquiry);
+
+        return InquiryMapper.toInquiryDTO(inquiry);
+
     }
 }

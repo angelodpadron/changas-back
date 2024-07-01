@@ -1,9 +1,6 @@
 package com.changas.model;
 
-import com.changas.exceptions.inquiry.InquiryException;
-import com.changas.exceptions.inquiry.QuestionAlreadyAnsweredException;
-import com.changas.exceptions.inquiry.SelfQuestionException;
-import com.changas.exceptions.inquiry.UnauthorizedAnswerException;
+import com.changas.exceptions.inquiry.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +23,7 @@ public class Inquiry {
     private Long id;
     private String question;
     private String answer;
+    private Boolean read;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "changa_id", nullable = false)
     private Changa changa;
@@ -46,6 +44,7 @@ public class Inquiry {
                 .question(question)
                 .customer(customer)
                 .changa(changa)
+                .read(false)
                 .build();
     }
 
@@ -58,6 +57,18 @@ public class Inquiry {
     public void answer(Customer customer, String answer) throws InquiryException {
         checkIfCanRespond(customer);
         setAnswer(answer);
+    }
+
+    public void markAsRead(Customer customer) throws MarkAsReadException {
+        checkIfCanMark(customer);
+        read = true;
+    }
+
+    private void checkIfCanMark(Customer customer) throws MarkAsReadException {
+        boolean isCustomer = customer.getId().equals(this.customer.getId());
+        boolean isAnswered = answer != null;
+
+        if (!(isCustomer && isAnswered)) throw new MarkAsReadException();
     }
 
     private void checkIfCanRespond(Customer customer) throws InquiryException {
